@@ -26,8 +26,7 @@ public:
 	virtual void UnhighlightActor() override;
 
 protected:
-	UPROPERTY(BlueprintReadOnly, Category = Debug)
-	bool bDrawDebugSphere = false;
+
 
 private:
 
