@@ -14,6 +14,7 @@ AAuraEnemy::AAuraEnemy()
 
 	AbilitySystemComponent = CreateDefaultSubobject<UAuraAbilitySystemComponent>("AbilitySystemComponent");
 	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
 	AttributeSet = CreateDefaultSubobject<UAuraAttributeSet>("AttributeSet");
 
@@ -22,6 +23,16 @@ AAuraEnemy::AAuraEnemy()
 void AAuraEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+}
+
+void AAuraEnemy::BeginPlay()
+{
+	Super::BeginPlay();
+
+	check(AbilitySystemComponent)
+
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 
 }
 

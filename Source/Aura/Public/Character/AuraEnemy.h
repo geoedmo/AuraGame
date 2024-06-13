@@ -22,11 +22,18 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+
+	/* <EnemyInteraction> */
+
+	// ** Overrides ** //
 	virtual void HighlightActor() override;
 	virtual void UnhighlightActor() override;
 
-protected:
+	/* </EnemyInteraction> */
 
+
+protected:
+	virtual void BeginPlay() override;
 
 private:
 
