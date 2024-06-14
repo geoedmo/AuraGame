@@ -15,6 +15,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxHealthChangedSignature, float,
 /**
  * 
  */
+
+struct FOnAttributeChangeData;
 UCLASS(BlueprintType, Blueprintable)
 class AURA_API UAuraOverlayWidgetController : public UAuraWidgetController
 {
@@ -28,6 +30,10 @@ public:
 	FOnHealthChangedSignature OnMaxHealthChanged;
 
 	virtual void BroadcastInitialValues() override;
+	virtual void BindCallbacksToDependencies() override;
 
+protected:
+	void HealthChanged(const FOnAttributeChangeData& Data) const;
+	void MaxHealthChanged(const FOnAttributeChangeData& Data) const;
 
 };

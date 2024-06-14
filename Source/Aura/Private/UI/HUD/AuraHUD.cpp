@@ -13,6 +13,8 @@ UAuraOverlayWidgetController* AAuraHUD::GetOverlayWidgetController(const FWidget
 		AuraOverlayWidgetController = NewObject<UAuraOverlayWidgetController>(this, AuraOverlayWidgetControllerClass);
 		AuraOverlayWidgetController->SetWidgetControllerParams(WCParams);
 
+		AuraOverlayWidgetController->BindCallbacksToDependencies();
+
 		return AuraOverlayWidgetController;
 	}
 
@@ -36,6 +38,7 @@ void AAuraHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySyst
 	OverlayWidget->SetWidgetController(WidgetController);
 
 	WidgetController->BroadcastInitialValues();
+	
 
 
 	if (Widget) {
