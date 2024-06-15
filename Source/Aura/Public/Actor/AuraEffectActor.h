@@ -45,7 +45,8 @@ protected:
 	bool bDestroyOnEffectRemoval = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
-	bool bIsMultiGameplayEffect = false;
+	float ActorLevel;
+
 
 	/** Instant **/
 
