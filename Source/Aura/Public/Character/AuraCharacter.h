@@ -27,7 +27,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
+	virtual void InitAbilityActorInfo() override;	
 
 
 private:
@@ -38,5 +38,5 @@ private:
 	UPROPERTY(EditAnywhere, Category = Settings)
 	USpringArmComponent* SpringArm;
 
-	void InitAbilityActorInfo();	
+	
 };
