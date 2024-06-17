@@ -86,7 +86,7 @@ void UAuraOverlayWidgetController::BindCallbacksToDependencies()
 	
 	);
 }
-
+/* OLD CALL BACKS NO LONGER USED
 void UAuraOverlayWidgetController::HealthChanged(const FOnAttributeChangeData& Data) const
 {
 	OnHealthChanged.Broadcast(Data.NewValue);
@@ -106,3 +106,4 @@ void UAuraOverlayWidgetController::MaxManaChanged(const FOnAttributeChangeData& 
 {
 	OnMaxManaChanged.Broadcast(Data.NewValue);
 }
+*/
