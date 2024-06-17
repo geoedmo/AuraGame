@@ -30,6 +30,7 @@ void AAuraCharacterBase::InitAbilityActorInfo()
 
 void AAuraCharacterBase::InitializePrimaryAttributes() const
 {
+	// Called in InitActorAbilityInfo() on AuraCharacter.cpp
 
 	check(IsValid(GetAbilitySystemComponent()));
 	check(DefaultPrimaryAttributes);
