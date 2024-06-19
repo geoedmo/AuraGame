@@ -5,10 +5,28 @@
 
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Data/AuraAttributeInfo.h"
-#include "AuraGameplayTags.h"
+#include "AttributeSet.h"
+
 
 void UAuraMenuWidgetController::BindCallbacksToDependencies()
 {
+
+	UAuraAttributeSet* AS = CastChecked<UAuraAttributeSet>(AttributeSet);
+	check(AttributeInfo);
+
+	for (auto& Pair : AS->TagsToAttributes)
+	{
+	
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Value()).AddLambda(
+			[this, Pair, AS](const FOnAttributeChangeData& Data) {
+
+				FAuraAttributeData Info = AttributeInfo->FindAttributeInfoForTag(Pair.Key);
+				Info.AttributeValue = Pair.Value().GetNumericValue(AS);
+				AttributeDataDelegate.Broadcast(Info);
+			}
+
+		);
+	}
 
 }
 
@@ -19,13 +37,13 @@ void UAuraMenuWidgetController::BroadcastInitialValues()
 
 
 	for (auto& Pair : AS->TagsToAttributes) {
-	FAuraAttributeData Info = AttributeInfo->FindAttributeInfoForTag(Pair.Key);
-	FGameplayAttribute AttributeToWorkOn = Pair.Value();
-	// Need the Numerical Value of this
-	Info.AttributeValue = AttributeToWorkOn.GetNumericValue(AS);
 
-	AttributeDataDelegate.Broadcast(Info);
+		FAuraAttributeData Info = AttributeInfo->FindAttributeInfoForTag(Pair.Key);
+		Info.AttributeValue = Pair.Value().GetNumericValue(AS);
+		AttributeDataDelegate.Broadcast(Info);
 
 	}
 
 }
+
+
