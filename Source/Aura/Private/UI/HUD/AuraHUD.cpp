@@ -4,6 +4,7 @@
 #include "UI/HUD/AuraHUD.h"
 
 #include "UI/Widget/AuraUserWidget.h"
+#include "UI/WidgetController/AuraMenuWidgetController.h"
 #include "UI/WidgetController/AuraOverlayWidgetController.h"
 
 
@@ -19,6 +20,20 @@ UAuraOverlayWidgetController* AAuraHUD::GetOverlayWidgetController(const FWidget
 
 
 	return AuraOverlayWidgetController;
+}
+
+UAuraMenuWidgetController* AAuraHUD::GetMenuWidgetController(const FWidgetControllerParams& WCParams)
+{
+	if (AuraMenuWidgetController == nullptr) {
+		AuraMenuWidgetController = NewObject<UAuraMenuWidgetController>(this, AuraMenuWidgetControllerClass);
+		AuraMenuWidgetController->SetWidgetControllerParams(WCParams);
+		AuraMenuWidgetController->BindCallbacksToDependencies();
+
+		return AuraMenuWidgetController;
+	}
+
+
+	return AuraMenuWidgetController;
 }
 
 void AAuraHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS)
