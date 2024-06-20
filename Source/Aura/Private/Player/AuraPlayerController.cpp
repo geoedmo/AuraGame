@@ -112,16 +112,20 @@ void AAuraPlayerController::Move(const FInputActionValue& ActionValue)
 void AAuraPlayerController::CursorTrace()
 {
 
-	FHitResult CursorHit;
-
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 	if (!CursorHit.bBlockingHit) return;
 
 	LastActor = ThisActor; // this is being done before, so logically first
 	ThisActor = CursorHit.GetActor(); // this is sort of the "current" actor being highlighted
 
-	/** 
-	
+	if (LastActor != ThisActor) {
+
+		if (LastActor) LastActor->UnhighlightActor();
+		if (ThisActor) ThisActor->HighlightActor();
+	}
+
+}
+/*
 	* Line Trace from cursor. There are several scenerios:
 	* A. LastActor is null && ThisActor is null
 	*	- Do nothing.
@@ -139,8 +143,7 @@ void AAuraPlayerController::CursorTrace()
 	*	- Do nothing.
 	
 	**/
-
-
+/*
 	if (LastActor == nullptr) 
 	{
 		if (ThisActor != nullptr) {
@@ -177,8 +180,7 @@ void AAuraPlayerController::CursorTrace()
 			}
 		}
 	}
-
-}
+*/
 
 void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
@@ -213,7 +215,7 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 	}
 	else
 	{
-		APawn* ControlledPawn = GetPawn();
+		const APawn* ControlledPawn = GetPawn();
 		if (FollowTime <= ShortPressThreshold && ControlledPawn) {
 
 			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
@@ -223,8 +225,6 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 				for (const FVector& PointLoc : NavPath->PathPoints) {
 
 					Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
-
-					DrawDebugSphere(GetWorld(), PointLoc, 8.f, 8.f, FColor::Green, false, 5.f);
 
 				}
 				CachedDestination = NavPath->PathPoints[NavPath->PathPoints.Num() - 1];
@@ -264,13 +264,11 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 
 		FollowTime += GetWorld()->GetDeltaSeconds();
 
-		FHitResult Hit;
-
-		if (GetHitResultUnderCursor(ECC_Visibility, false, Hit)) {
+		if (CursorHit.bBlockingHit) {
 
 			// We got a good hit result for the click to move
 
-			CachedDestination = Hit.ImpactPoint;
+			CachedDestination = CursorHit.ImpactPoint;
 
 		}
 
