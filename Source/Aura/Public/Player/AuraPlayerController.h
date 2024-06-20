@@ -8,8 +8,10 @@
 
 class UInputMappingContext;
 class UInputAction;
-struct FInputActionValue;
 class IEnemyInteraction;
+class UAuraInputConfig;
+struct FGameplayTag;
+struct FInputActionValue;
 
 UCLASS()
 class AURA_API AAuraPlayerController : public APlayerController
@@ -36,5 +38,10 @@ private:
 	TScriptInterface<IEnemyInteraction> LastActor;
 	TScriptInterface <IEnemyInteraction> ThisActor;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UAuraInputConfig> AuraInputConfig;
 
+	void AbilityInputTagPressed(FGameplayTag InputTag);
+	void AbilityInputTagReleased(FGameplayTag InputTag);
+	void AbilityInputTagHeld(FGameplayTag InputTag);
 };
