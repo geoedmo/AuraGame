@@ -55,6 +55,7 @@ protected:
 	void AddCharacterAbilities();
 
 private:
+
 	UPROPERTY(EditAnywhere, Category = "Abilities")
-	TArray < TSubclassOf<UGameplayAbility>> StartupAbilities;
+	TArray <TSubclassOf<UGameplayAbility>> StartupAbilities;
 };
