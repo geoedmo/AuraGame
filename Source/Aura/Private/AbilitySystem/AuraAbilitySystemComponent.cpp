@@ -2,6 +2,7 @@
 
 
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystemComponent.h"
 #include "AuraGameplayTags.h"
 void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 {
@@ -24,12 +25,18 @@ void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 
 	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
 
-	GEngine->AddOnScreenDebugMessage(
-		-1, 
-		10.f, 
-		FColor::Red, 
-		FString::Printf(TEXT("Tag: %s"), *GameplayTags.Attributes_Secondary_Armor.ToString())
-	);
+}
+
+void UAuraAbilitySystemComponent::AddCharacterAbilities(TArray<TSubclassOf<UGameplayAbility>> StartupAbilities)
+{
+	for (TSubclassOf<UGameplayAbility> AbilityClass : StartupAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
+		//GiveAbility(AbilitySpec);
+		GiveAbilityAndActivateOnce(AbilitySpec);
+
+	}
+
 }
 
 void UAuraAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
