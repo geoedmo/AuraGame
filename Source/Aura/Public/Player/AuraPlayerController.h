@@ -6,12 +6,15 @@
 #include "GameFramework/PlayerController.h"
 #include "AuraPlayerController.generated.h"
 
+
+struct FGameplayTag;
+struct FInputActionValue;
 class UInputMappingContext;
 class UInputAction;
 class IEnemyInteraction;
 class UAuraInputConfig;
-struct FGameplayTag;
-struct FInputActionValue;
+class UAuraAbilitySystemComponent;
+class USplineComponent;
 
 UCLASS()
 class AURA_API AAuraPlayerController : public APlayerController
@@ -26,11 +29,24 @@ protected:
 	virtual void SetupInputComponent() override;
 
 private:
+	//Click to move Variables
+	FVector CachedDestination = FVector::ZeroVector;
+	float FollowTime = 0.f;
+	float ShortPressThreshold = 0.5f;
+	bool bAutoRunning = false;
+	bool bTargeting = false;
+
+	UPROPERTY(EditDefaultsOnly)
+	float AutoRunAcceptanceRadius = 50.f;
+
+	TObjectPtr<USplineComponent> Spline;
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputMappingContext> AuraContext;
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> MoveAction;
+
+	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
 
 	void Move(const FInputActionValue& ActionValue);
 	void CursorTrace();
@@ -40,8 +56,11 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UAuraInputConfig> AuraInputConfig;
-
 	void AbilityInputTagPressed(FGameplayTag InputTag);
 	void AbilityInputTagReleased(FGameplayTag InputTag);
 	void AbilityInputTagHeld(FGameplayTag InputTag);
+
+	UAuraAbilitySystemComponent* GetASC();
+
+
 };
