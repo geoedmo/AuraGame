@@ -47,7 +47,8 @@ private:
 	TObjectPtr<UInputAction> MoveAction;
 
 	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
-
+	
+	void AutoRun();
 	void Move(const FInputActionValue& ActionValue);
 	void CursorTrace();
 
@@ -61,6 +62,7 @@ private:
 	void AbilityInputTagHeld(FGameplayTag InputTag);
 
 	UAuraAbilitySystemComponent* GetASC();
+
 
 
 };
