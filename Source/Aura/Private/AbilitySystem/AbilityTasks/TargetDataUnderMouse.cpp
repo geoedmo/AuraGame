@@ -78,5 +78,6 @@ void UTargetDataUnderMouse::OnTargetDataReplicatedCallback(const FGameplayAbilit
 	if (ShouldBroadcastAbilityTaskDelegates()) {
 		ValidData.Broadcast(DataHandle);
 	}
+	//git commit test
 
 }
