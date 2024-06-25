@@ -14,30 +14,37 @@
  	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
 USTRUCT()
-struct FEffectProperties 
+struct FEffectProperties
 {
-
 	GENERATED_BODY()
 
-	FEffectProperties(){}
+	FEffectProperties() {}
 
 	FGameplayEffectContextHandle EffectContextHandle;
+
 	UPROPERTY()
-	TObjectPtr<UAbilitySystemComponent> SourceASC = nullptr;
+	UAbilitySystemComponent* SourceASC = nullptr;
+
 	UPROPERTY()
-	TObjectPtr<AActor> SourceAvatarActor = nullptr;
+	AActor* SourceAvatarActor = nullptr;
+
 	UPROPERTY()
-	TObjectPtr<AController> SourceController = nullptr;
+	AController* SourceController = nullptr;
+
 	UPROPERTY()
-	TObjectPtr<ACharacter> SourceCharacter = nullptr;
+	ACharacter* SourceCharacter = nullptr;
+
 	UPROPERTY()
-	TObjectPtr<UAbilitySystemComponent> TargetASC = nullptr;
+	UAbilitySystemComponent* TargetASC = nullptr;
+
 	UPROPERTY()
-	TObjectPtr<AActor> TargetAvatarActor = nullptr;
+	AActor* TargetAvatarActor = nullptr;
+
 	UPROPERTY()
-	TObjectPtr<AController> TargetController = nullptr;
+	AController* TargetController = nullptr;
+
 	UPROPERTY()
-	TObjectPtr<ACharacter> TargetCharacter = nullptr;
+	ACharacter* TargetCharacter = nullptr;
 };
 
 // typedef is specific to the FGameplayAttribute() signature, TStaticFuncPointer is generic to any signature.
@@ -210,6 +217,6 @@ protected:
 
 private:
 
-	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties Props);
+	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props);
 
 };
