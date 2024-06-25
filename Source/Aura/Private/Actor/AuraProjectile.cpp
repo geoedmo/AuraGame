@@ -9,6 +9,7 @@
 #include "NiagaraComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/AudioComponent.h"
+#include "Aura/Aura.h"
 
 AAuraProjectile::AAuraProjectile()
 {
@@ -20,6 +21,8 @@ AAuraProjectile::AAuraProjectile()
 
 
 	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+	Sphere->SetCollisionObjectType(ECC_Projectile);
 	Sphere->SetGenerateOverlapEvents(true);
 	Sphere->SetCollisionResponseToAllChannels(ECR_Ignore);
 	Sphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);

@@ -43,6 +43,8 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		);
 
 		//TODO: Give the projectile a Gameplay Effect Spec for causing damage..
+
+
 		Projectile->FinishSpawning(SpawnTransform);
 
 	}
