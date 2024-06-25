@@ -37,6 +37,8 @@ private:
 	bool bTargeting = false;
 	FHitResult CursorHit;
 
+	bool bShiftKeyDown;
+
 	UPROPERTY(EditDefaultsOnly)
 	float AutoRunAcceptanceRadius = 50.f;
 
@@ -46,11 +48,15 @@ private:
 	TObjectPtr<UInputMappingContext> AuraContext;
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> MoveAction;
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction> ShiftAction;
 
 	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
 	
 	void AutoRun();
 	void Move(const FInputActionValue& ActionValue);
+	void ShiftPressed() { bShiftKeyDown = true; };
+	void ShiftReleased() { bShiftKeyDown = false; };
 	void CursorTrace();
 
 	TScriptInterface<IEnemyInteraction> LastActor;
