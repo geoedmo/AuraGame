@@ -38,7 +38,7 @@ private:
 	bool bHit = false;
 
 	UPROPERTY(EditDefaultsOnly)
-	float LifeSpan = 15.f
+	float LifeSpan = 15.f;
 
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 	TObjectPtr<UNiagaraSystem> ImpactSystem;
@@ -49,7 +49,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 	TObjectPtr<USoundBase> LoopingSound;
 
-	UPROPERTY(EditAnywhere, Category = "Projectile")
+	UPROPERTY()
 	TObjectPtr<UAudioComponent> LoopingSoundComponent;
 
 	UPROPERTY(VisibleAnywhere)
