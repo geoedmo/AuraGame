@@ -5,11 +5,17 @@
 #include "CoreMinimal.h"
 #include "Interaction/EnemyInteraction.h"
 #include "Character/AuraCharacterBase.h"
+#include "UI/WidgetController/AuraOverlayWidgetController.h"
 #include "AuraEnemy.generated.h"
 
 /**
  * 
  */
+
+
+
+
+class UWidgetComponent;
 UCLASS()
 class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInteraction
 {
@@ -22,6 +28,11 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSignature OnHealthChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSignature OnMaxHealthChanged;
 
 	/* <EnemyInteraction> */
 
@@ -42,6 +53,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
 	int32 Level = 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
+	TObjectPtr<UWidgetComponent> EnemyHealthBar;
 private:
 
 };
