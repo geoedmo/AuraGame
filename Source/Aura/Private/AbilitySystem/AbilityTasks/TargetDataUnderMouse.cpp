@@ -23,6 +23,7 @@ void UTargetDataUnderMouse::Activate()
 	}
 	else
 	{
+		// On The Server, We need to Receieve the Data
 		const FGameplayAbilitySpecHandle SpecHandle = GetAbilitySpecHandle();
 		const FPredictionKey ActivationPredictionKey = GetActivationPredictionKey();
 
