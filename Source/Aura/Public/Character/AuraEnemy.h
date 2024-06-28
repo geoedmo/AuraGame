@@ -33,6 +33,12 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnMaxHealthChanged;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Combat")
+	bool bHitReacting = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Combat")
+	float BaseWalkSpeed = 250.f;
+
 	/* <EnemyInteraction> */
 
 	// ** Overrides ** //
@@ -45,9 +51,10 @@ public:
 	virtual int32 GetPlayerLevel() override;
 
 	/** </Combat Interface> **/
+
+	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+
 protected:
-	virtual void BeginPlay() override;
-	virtual void InitAbilityActorInfo() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
 	int32 Level = 1;
@@ -58,7 +65,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	TObjectPtr<UWidgetComponent> EnemyHealthBar;
 
+	virtual void BeginPlay() override;
+	virtual void InitAbilityActorInfo() override;
 	virtual void InitializeDefaultAttributes() const override;
+
+
 private:
 
 };
