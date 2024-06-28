@@ -51,6 +51,9 @@ void AAuraEnemy::BeginPlay()
 
 	InitAbilityActorInfo();
 
+	UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+
+
 	if (UAuraUserWidget* AuraUserWidget = Cast<UAuraUserWidget>(EnemyHealthBar->GetUserWidgetObject()))
 	{
 		AuraUserWidget->SetWidgetController(this);
