@@ -32,7 +32,7 @@ void UAuraAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputT
 {
 		if (!InputTag.IsValid()) return;
 
-		GetActivatableAbilities();
+		//GetActivatableAbilities();
 
 		for (auto& AbilitySpec : GetActivatableAbilities())
 		{

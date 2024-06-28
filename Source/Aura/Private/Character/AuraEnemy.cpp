@@ -65,7 +65,6 @@ void AAuraEnemy::BeginPlay()
 			[this](const FOnAttributeChangeData& Data) {
 
 				OnHealthChanged.Broadcast(Data.NewValue);
-
 			}
 		);
 

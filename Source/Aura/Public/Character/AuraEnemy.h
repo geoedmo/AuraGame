@@ -14,8 +14,6 @@
  */
 
 
-
-
 class UWidgetComponent;
 UCLASS()
 class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInteraction
