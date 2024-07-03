@@ -39,6 +39,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Combat")
 	float BaseWalkSpeed = 250.f;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Combat")
+	float LifeSpan = 250.f;
+
 	/* <EnemyInteraction> */
 
 	// ** Overrides ** //
@@ -49,7 +52,7 @@ public:
 
 	/** <Combat Interface> **/
 	virtual int32 GetPlayerLevel() override;
-
+	virtual void Die() override;
 	/** </Combat Interface> **/
 
 	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);

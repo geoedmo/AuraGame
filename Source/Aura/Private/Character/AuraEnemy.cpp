@@ -40,6 +40,14 @@ int32 AAuraEnemy::GetPlayerLevel()
 	return Level;
 }
 
+void AAuraEnemy::Die()
+{
+
+	SetLifeSpan(LifeSpan);
+	Super::Die();
+
+}
+
 
 
 void AAuraEnemy::BeginPlay()
@@ -51,6 +59,7 @@ void AAuraEnemy::BeginPlay()
 
 	InitAbilityActorInfo();
 
+	// Give startup abilities from the library, which grab from the data asset.
 	UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
 
 
@@ -103,12 +112,15 @@ void AAuraEnemy::InitAbilityActorInfo()
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 
+	// Grab the Default Attributes, which pull from the class info data asset
 	InitializeDefaultAttributes();
 
 }
 
 void AAuraEnemy::InitializeDefaultAttributes() const
 {
+
+	// Initialize these class defaults which pull from the data asset, and inside use gameplay effects to set attributes at the start
 	UAuraAbilitySystemLibrary::InitializeClassDefaultAttributes(this, CharacterClass, Level, AbilitySystemComponent);
 }
 
