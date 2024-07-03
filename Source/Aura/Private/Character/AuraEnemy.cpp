@@ -42,7 +42,7 @@ int32 AAuraEnemy::GetPlayerLevel()
 
 void AAuraEnemy::Die()
 {
-
+	// test for new commit
 	SetLifeSpan(LifeSpan);
 	Super::Die();
 
