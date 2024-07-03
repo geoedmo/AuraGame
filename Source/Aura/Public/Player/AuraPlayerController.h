@@ -15,6 +15,8 @@ class IEnemyInteraction;
 class UAuraInputConfig;
 class UAuraAbilitySystemComponent;
 class USplineComponent;
+class UDamageTextComponent;
+
 
 UCLASS()
 class AURA_API AAuraPlayerController : public APlayerController
@@ -24,6 +26,9 @@ class AURA_API AAuraPlayerController : public APlayerController
 public:
 	AAuraPlayerController();
 	virtual void PlayerTick(float DeltaTime) override;
+
+	UFUNCTION(Client, Reliable)
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter);
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
@@ -50,6 +55,10 @@ private:
 	TObjectPtr<UInputAction> MoveAction;
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> ShiftAction;
+
+	/** Floating Text Variable **/
+	UPROPERTY(EditDefaultsOnly, Category = "Floating Text")
+	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 
 	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
 	

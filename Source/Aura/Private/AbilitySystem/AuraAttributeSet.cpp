@@ -2,12 +2,14 @@
 
 
 #include "AbilitySystem/AuraAttributeSet.h"
+#include "Player/AuraPlayerController.h"
 #include "GameFramework/Character.h"
 #include "GameplayEffectExtension.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "Interaction/CombatInterface.h"
 #include "AuraGameplayTags.h"
+#include "Kismet/GameplayStatics.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
@@ -115,18 +117,32 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 			} else
 			{
-
-
 				FGameplayTagContainer TagContainer;
 				TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 
 			}
 
+			ShowFloatingText(Props, LocalIncomingDamage);
+
 		}
 	}
 
 }
+void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage) const
+{
+	// Only show damage numbers if the damage is not self damage
+	if (Props.SourceCharacter != Props.TargetCharacter) {
+
+		// Get Player Controller
+		if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0))) {
+
+			PC->ShowDamageNumber(Damage, Props.TargetCharacter);
+		}
+
+	}
+}
+
 void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props)
 {
 
