@@ -6,6 +6,7 @@
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AuraGameplayTags.h"
 #include "Interaction/CombatInterface.h"
+#include "AuraAbilityTypes.h"
 #include "AbilitySystemComponent.h"
 
 // raw internal struct only used here
@@ -73,16 +74,18 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 
 	// Calculations of Damage if spell is Blocked
-	float BlockChance = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().BlockChanceDef, EvaluationParameters, BlockChance);
-	BlockChance = FMath::Max<float>(0.f, BlockChance);
+	float TargetBlockChance = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().BlockChanceDef, EvaluationParameters, TargetBlockChance);
+	TargetBlockChance = FMath::Max<float>(0.f, TargetBlockChance);
 	
-		//See if it was a blocked Ability
-		float RandomNum = FMath::FRandRange(0.f, 100.f);
-		bool bBlocked = RandomNum <= BlockChance ? true : false;
+	//See if it was a blocked Ability
+	const bool bBlocked = FMath::FRandRange(0.f, 100.f) < TargetBlockChance;
+		
+	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
+	UAuraAbilitySystemLibrary::SetIsBlockedHit(EffectContextHandle, bBlocked);
 
-		//Halve the Damage
-		Damage = bBlocked ? Damage / 2.f : Damage;
+	//Halve the Damage
+	Damage = bBlocked ? Damage / 2.f : Damage;
 
 	// Deal with Armor and ArmorPen
 	float TargetArmor = 0.f;
@@ -120,6 +123,9 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	const float EffectiveCriticalHitChance = SourceCriticalHitChance - TargetCriticalHitResistance * CriticalHitResistanceCoefficient;
 	const bool bCriticalHit = FMath::RandRange(1, 100) < EffectiveCriticalHitChance;
+
+
+	UAuraAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bCriticalHit);
 
 	Damage = bCriticalHit ? Damage * 2.f + SourceCriticalHitDamage : Damage;
 	
