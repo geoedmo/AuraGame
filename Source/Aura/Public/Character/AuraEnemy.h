@@ -13,7 +13,7 @@
  * 
  */
 
-
+class UAuraAttributeSet;
 class UWidgetComponent;
 UCLASS()
 class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInteraction
@@ -71,7 +71,6 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;
 	virtual void InitializeDefaultAttributes() const override;
-
 
 private:
 

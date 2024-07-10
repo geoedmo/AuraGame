@@ -54,6 +54,7 @@ void AAuraProjectile::BeginPlay()
 
 void AAuraProjectile::Destroyed()
 {
+
 	if (!bHit && !HasAuthority()) 
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
@@ -74,13 +75,28 @@ void AAuraProjectile::Destroyed()
 
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactSystem, GetActorLocation());
+	const bool bDamageEffectSpecHandleIsValid = DamageEffectSpecHandle.Data.IsValid();
 
-	if (LoopingSoundComponent) {
-		LoopingSoundComponent->Stop();
+	if (!bDamageEffectSpecHandleIsValid) return;
+
+	const bool bOverLappingInstigatorIsSelf = DamageEffectSpecHandle.Data.Get()->GetContext().GetInstigator() == OtherActor;
+	const bool bEffectCauserIsSelf = DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor;
+
+	if (bEffectCauserIsSelf || bOverLappingInstigatorIsSelf)
+	{
+		return;
 	}
+
+	if (!bHit) {
+		
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactSystem, GetActorLocation());
+
+			if (LoopingSoundComponent) {
+				LoopingSoundComponent->Stop();
+			}
 	
+	}
 
 	if (HasAuthority())
 	{
@@ -93,7 +109,7 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 
 		Destroy();
 
-	}
+	} 
 	else 
 	{
 		bHit = true;

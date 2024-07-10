@@ -57,11 +57,13 @@ void AAuraEnemy::BeginPlay()
 
 	check(AbilitySystemComponent)
 
-	InitAbilityActorInfo();
+		InitAbilityActorInfo();
 
+	if (HasAuthority())
+	{
 	// Give startup abilities from the library, which grab from the data asset.
 	UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
-
+	}
 
 	if (UAuraUserWidget* AuraUserWidget = Cast<UAuraUserWidget>(EnemyHealthBar->GetUserWidgetObject()))
 	{
@@ -69,22 +71,20 @@ void AAuraEnemy::BeginPlay()
 	}
 
 	// Broadcast health and mAx health changing.
-	if (UAuraAttributeSet* AuraAS = CastChecked<UAuraAttributeSet>(AttributeSet))
+	if (const UAuraAttributeSet* AuraAS = CastChecked<UAuraAttributeSet>(AttributeSet))
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAS->GetHealthAttribute()).AddLambda(
-			[this](const FOnAttributeChangeData& Data) {
-
+			[this](const FOnAttributeChangeData& Data)
+			{
 				OnHealthChanged.Broadcast(Data.NewValue);
-
 			}
 		);
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAS->GetMaxHealthAttribute()).AddLambda(
-			[this](const FOnAttributeChangeData& Data) {
-
-				OnHealthChanged.Broadcast(Data.NewValue);
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnMaxHealthChanged.Broadcast(Data.NewValue);
 			}
 		);
-
 
 		AbilitySystemComponent->RegisterGameplayTagEvent(FAuraGameplayTags::Get().Effects_HitReact, EGameplayTagEventType::NewOrRemoved).AddUObject(
 			this,
@@ -110,10 +110,15 @@ void AAuraEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCou
 void AAuraEnemy::InitAbilityActorInfo()
 {
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
-	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
+	UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+	AuraASC->AbilityActorInfoSet();
 
+
+	if (HasAuthority()) {
 	// Grab the Default Attributes, which pull from the class info data asset
 	InitializeDefaultAttributes();
+	}
+
 
 }
 
@@ -123,7 +128,6 @@ void AAuraEnemy::InitializeDefaultAttributes() const
 	// Initialize these class defaults which pull from the data asset, and inside use gameplay effects to set attributes at the start
 	UAuraAbilitySystemLibrary::InitializeClassDefaultAttributes(this, CharacterClass, Level, AbilitySystemComponent);
 }
-
 
 
 void AAuraEnemy::HighlightActor()
