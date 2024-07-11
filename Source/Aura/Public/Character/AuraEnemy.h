@@ -15,6 +15,9 @@
 
 class UAuraAttributeSet;
 class UWidgetComponent;
+class UBehaviorTree;
+class AAuraAIController;
+
 UCLASS()
 class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInteraction
 {
@@ -24,6 +27,8 @@ class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInteraction
 public:
 
 	AAuraEnemy();
+
+	virtual void PossessedBy(AController* NewController) override;
 
 	virtual void Tick(float DeltaTime) override;
 
@@ -67,6 +72,13 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	TObjectPtr<UWidgetComponent> EnemyHealthBar;
+
+	UPROPERTY(EditAnywhere, Category = "AI")
+	TObjectPtr<UBehaviorTree> BehaviorTree;
+
+	UPROPERTY()
+	TObjectPtr<AAuraAIController> AuraAIController;
+
 
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;
