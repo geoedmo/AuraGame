@@ -47,11 +47,18 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Combat")
 	float LifeSpan = 250.f;
 
+	UPROPERTY(BlueprintReadWrite, Category = "Combat")
+	TObjectPtr<AActor> CombatTarget;
+
 	/* <EnemyInteraction> */
 
 	// ** Overrides ** //
 	virtual void HighlightActor() override;
 	virtual void UnhighlightActor() override;
+
+	virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override;
+
+	virtual AActor* GetCombatTarget_Implementation() const override;
 
 	/* </EnemyInteraction> */
 

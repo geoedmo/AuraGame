@@ -49,14 +49,16 @@ public:
 	FGameplayTag Attributes_Resistance_Physical;
 
 	/** Input Gameplay Tags **/
-
-	/** Abilities **/
 	FGameplayTag InputTag_LMB;
 	FGameplayTag InputTag_RMB;
 	FGameplayTag InputTag_1;
 	FGameplayTag InputTag_2;
 	FGameplayTag InputTag_3;
 	FGameplayTag InputTag_4;
+
+	/** Abilities **/
+	FGameplayTag Abilities_Attack;
+
 
 	/* Combat Related */
 	FGameplayTag Damage;

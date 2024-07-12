@@ -37,6 +37,8 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MutlicastHandleDeath();
 
+	virtual FVector GetCombatSocketLocation_Implementation() override;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo();
@@ -62,8 +64,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
 
-	virtual FVector GetCombatSocketLocation() override;
 	virtual void InitializeDefaultAttributes() const;
+
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 
 	void AddCharacterAbilities();

@@ -14,6 +14,7 @@ enum class ECharacterClass : uint8
 	Ranger
 };
 
+class UGameplayAbility;
 class UGameplayEffect;
 USTRUCT(BlueprintType)
 struct FCharacterClassDefaultInfo
@@ -22,6 +23,9 @@ struct FCharacterClassDefaultInfo
 
 	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults")
 	TSubclassOf<UGameplayEffect> PrimaryAttributes;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults")
+	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 
 };
 
