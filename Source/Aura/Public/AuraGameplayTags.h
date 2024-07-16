@@ -59,6 +59,11 @@ public:
 	/** Abilities **/
 	FGameplayTag Abilities_Attack;
 
+	/** Montage Melee Attacks **/
+	FGameplayTag Montage_Attack_Weapon;
+	FGameplayTag Montage_Attack_RightHand;
+	FGameplayTag Montage_Attack_LeftHand;
+
 
 	/* Combat Related */
 	FGameplayTag Damage;
