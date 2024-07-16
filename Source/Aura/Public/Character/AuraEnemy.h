@@ -50,6 +50,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Combat")
 	TObjectPtr<AActor> CombatTarget;
 
+
 	/* <EnemyInteraction> */
 
 	// ** Overrides ** //
@@ -65,6 +66,7 @@ public:
 	/** <Combat Interface> **/
 	virtual int32 GetPlayerLevel() override;
 	virtual void Die() override;
+
 	/** </Combat Interface> **/
 
 	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);

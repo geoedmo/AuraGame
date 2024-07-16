@@ -4,6 +4,7 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"	
+
 #include "Aura/Aura.h"
 
 
@@ -58,6 +59,8 @@ void AAuraCharacterBase::MutlicastHandleDeath_Implementation()
 
 
 	Dissolve();
+
+	bDead = true;
 }
 
 void AAuraCharacterBase::BeginPlay()
@@ -116,6 +119,16 @@ FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation()
 {
 	return Weapon->GetSocketLocation(WeaponTipSocketName);
 }
+bool AAuraCharacterBase::IsDead_Implementation() const
+{
+	return bDead;
+}
+
+AActor* AAuraCharacterBase::GetAvatar_Implementation()
+{
+	return this;
+}
+
 void AAuraCharacterBase::InitializeDefaultAttributes() const
 {
 	// Called in InitActorAbilityInfo() on AuraCharacter.cpp
