@@ -9,6 +9,8 @@
 /**
  * 
  */
+
+struct FTaggedMontage;
 UCLASS()
 class AURA_API UAuraDamageAbility : public UAuraGameplayAbility
 {
@@ -26,4 +28,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	TMap<FGameplayTag, FScalableFloat> DamageTypes;
+
+	UFUNCTION(BlueprintPure)
+	FTaggedMontage GetRandomMontageFromArray(const TArray<FTaggedMontage>& TaggedMontage) const;
 };
