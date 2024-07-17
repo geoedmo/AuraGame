@@ -41,7 +41,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Combat")
 	bool bHitReacting = false;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Combat")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
 	float BaseWalkSpeed = 250.f;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Combat")
@@ -56,9 +56,7 @@ public:
 	// ** Overrides ** //
 	virtual void HighlightActor() override;
 	virtual void UnhighlightActor() override;
-
 	virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override;
-
 	virtual AActor* GetCombatTarget_Implementation() const override;
 
 	/* </EnemyInteraction> */
