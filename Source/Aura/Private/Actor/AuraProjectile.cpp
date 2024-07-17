@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/AudioComponent.h"
 #include "Aura/Aura.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 
@@ -83,6 +84,15 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	const bool bEffectCauserIsSelf = DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor;
 
 	if (bEffectCauserIsSelf || bOverLappingInstigatorIsSelf)
+	{
+		return;
+	}
+	
+	// BE AWARE: This check for enemy friendly fire breaks PVP in the future for overlapping projectiles 
+
+	AActor* InstigatingActor = DamageEffectSpecHandle.Data.Get()->GetContext().GetInstigator();
+
+	if (!UAuraAbilitySystemLibrary::IsNotFriend(InstigatingActor, OtherActor))
 	{
 		return;
 	}
