@@ -14,6 +14,7 @@ class UAttributeSet;
 class UGameplayAbility;
 class UAnimMontage;
 class UMaterialInstance;
+class UNiagaraSystem;
 
 UCLASS(Abstract)
 class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
@@ -37,14 +38,13 @@ public:
 	TArray<FTaggedMontage> AttackMontages;
 
 	virtual void Die() override;
+
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MutlicastHandleDeath();
-
+	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
 	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
-
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatar_Implementation() override;
-
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
 	/* </CombatInterface> */
 
@@ -52,6 +52,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo();
+
+	UPROPERTY(EditAnywhere, Category = Combat)
+	TObjectPtr<UNiagaraSystem> BloodEffect;
 
 	UPROPERTY()
 	bool bDead = false;

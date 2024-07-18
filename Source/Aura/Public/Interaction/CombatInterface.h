@@ -18,6 +18,9 @@ struct FTaggedMontage
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
 	FGameplayTag MontageTag;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
+	USoundBase* ImpactSound = nullptr;
+
 };
 
 // This class does not need to be modified.
@@ -40,6 +43,10 @@ class AURA_API ICombatInterface
 public:
 
 	virtual int32 GetPlayerLevel();
+
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	UNiagaraSystem* GetBloodEffect();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	TArray<FTaggedMontage> GetAttackMontages();
