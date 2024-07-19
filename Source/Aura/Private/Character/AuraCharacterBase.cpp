@@ -5,7 +5,7 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"	
 #include "AuraGameplayTags.h"
-
+#include "Kismet/GameplayStatics.h"
 #include "Aura/Aura.h"
 
 
@@ -48,6 +48,12 @@ void AAuraCharacterBase::Die()
 
 void AAuraCharacterBase::MutlicastHandleDeath_Implementation()
 {
+	UGameplayStatics::PlaySoundAtLocation(
+		this,
+		DeathSound,
+		GetActorLocation()
+	);
+
 	Weapon->SetSimulatePhysics(true);
 	Weapon->SetEnableGravity(true);
 	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
@@ -136,6 +142,10 @@ FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGamepl
 
 	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_RightHand)) {
 		return GetMesh()->GetSocketLocation(RightHandSocketName);
+	}
+
+	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Tail)) {
+		return GetMesh()->GetSocketLocation(TailSocketName);
 	}
 	return FVector();
 }
