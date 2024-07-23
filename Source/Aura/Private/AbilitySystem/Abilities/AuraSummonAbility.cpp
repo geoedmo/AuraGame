@@ -12,6 +12,7 @@ TArray<FVector> UAuraSummonAbility::GetSpawnLocations()
 
 	const FVector LeftOfSpread = Forward.RotateAngleAxis(-SpawnSpread / 2.f, FVector::UpVector);
 	TArray<FVector> SpawnLocations;
+	
 	for (int32 i = 0; i < NumMinions; i++)
 	{
 		const FVector Direction = LeftOfSpread.RotateAngleAxis(DeltaSpread * i, FVector::UpVector);
@@ -27,4 +28,10 @@ TArray<FVector> UAuraSummonAbility::GetSpawnLocations()
 	}
 
 	return SpawnLocations;
+}
+
+TSubclassOf<APawn> UAuraSummonAbility::GetRandomMinionClass()
+{
+	int32 Selection = FMath::RandRange(0, MinionClasses.Num() - 1);
+	return MinionClasses[Selection];
 }

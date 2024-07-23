@@ -69,6 +69,11 @@ void AAuraEnemy::Die()
 
 }
 
+void AAuraEnemy::FinishSummoning_Implementation()
+{
+	AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("CastingSummon"), false);
+}
+
 void AAuraEnemy::BeginPlay()
 {
 	Super::BeginPlay();

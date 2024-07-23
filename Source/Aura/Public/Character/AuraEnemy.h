@@ -64,7 +64,7 @@ public:
 	/** <Combat Interface> **/
 	virtual int32 GetPlayerLevel() override;
 	virtual void Die() override;
-
+	virtual void FinishSummoning_Implementation() override;
 	/** </Combat Interface> **/
 
 	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
