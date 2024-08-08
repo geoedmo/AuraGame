@@ -125,7 +125,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 
 
 	/*
-	* Combat
+	* Abilities
 	*/
 		GameplayTags.Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.Attack"),
@@ -135,6 +135,20 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Abilities_Summon = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.Summon"),
 		FString("Summon Ability Tag")
+	);
+
+	GameplayTags.Abilities_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Fire.FireBolt"),
+		FString("FireBolt Ability Tag")
+	);
+
+	/*
+	* Cooldowns
+	*/
+
+	GameplayTags.Cooldowns_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldowns.Fire.FireBolt"),
+		FString("FireBolt Cooldown Tag")
 	);
 
 	/*

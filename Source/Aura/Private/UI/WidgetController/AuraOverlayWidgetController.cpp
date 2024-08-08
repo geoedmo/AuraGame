@@ -3,6 +3,7 @@
 
 #include "UI/WidgetController/AuraOverlayWidgetController.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/Data/AbilityInfo.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 
 void UAuraOverlayWidgetController::BroadcastInitialValues()
@@ -63,30 +64,76 @@ void UAuraOverlayWidgetController::BindCallbacksToDependencies()
 		}
 	);
 
-	AuraASC->EffectAssetTags.AddLambda(
-	
-		[this](const FGameplayTagContainer& AssetTags)
-		{
+	if (AuraASC)
+	{
+		// Bind to the Delegate telling us the Startup Abilities are given.
 
-			for (const FGameplayTag& Tag : AssetTags)
-			{
-				//For example, say that Tag - Message.HealthPotion
-				//"Message.HealthPotion".MatchesTag("Message") will return True, "Message".MatchesTag("Message.HealthPotion") will return False
-
-				FGameplayTag MessageTag = FGameplayTag::RequestGameplayTag(FName("Message"));
+		if (AuraASC->bStartupAbilitiesGiven) {
 			
-				if (Tag.MatchesTag(MessageTag)) {
-				FUIWidgetRow* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);
-				MessageWidgetRowDelegate.Broadcast(*Row);
-				}
-
-
-			}
+			OnInitializeStartupAbilities(AuraASC);
 
 		}
-	
-	);
+		else
+		{ 
+
+			AuraASC->AbilitiesGivenDelegate.AddUObject(this, &UAuraOverlayWidgetController::OnInitializeStartupAbilities);
+
+		}
+
+			
+
+			AuraASC->EffectAssetTags.AddLambda(
+
+				[this](const FGameplayTagContainer& AssetTags)
+				{
+
+					for (const FGameplayTag& Tag : AssetTags)
+					{
+						//For example, say that Tag - Message.HealthPotion
+						//"Message.HealthPotion".MatchesTag("Message") will return True, "Message".MatchesTag("Message.HealthPotion") will return False
+
+						FGameplayTag MessageTag = FGameplayTag::RequestGameplayTag(FName("Message"));
+
+						if (Tag.MatchesTag(MessageTag)) {
+							FUIWidgetRow* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);
+							MessageWidgetRowDelegate.Broadcast(*Row);
+						}
+
+
+					}
+
+				}
+
+			);
+	}
+
+
 }
+void UAuraOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraAbilitySystemComponent)
+{
+	//TODO get information about all given abilities, lookup their info and broadcast to widgets\\
+
+	if (!AuraAbilitySystemComponent->bStartupAbilitiesGiven) return;
+
+
+	FForEachAbility BroadcastDelegate;
+
+	BroadcastDelegate.BindLambda(
+
+		[this, AuraAbilitySystemComponent](const FGameplayAbilitySpec& AbilitySpec) 
+		{
+			FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AuraAbilitySystemComponent->GetAbilityTagFromSpec(AbilitySpec));
+			Info.InputTag = AuraAbilitySystemComponent->GetInputTagFromSpec(AbilitySpec);
+			AbilityInfoDelegate.Broadcast(Info);
+		}
+	);
+
+	AuraAbilitySystemComponent->ForEachAbility(BroadcastDelegate);
+
+}
+
+
+
 /* OLD CALL BACKS NO LONGER USED
 void UAuraOverlayWidgetController::HealthChanged(const FOnAttributeChangeData& Data) const
 {

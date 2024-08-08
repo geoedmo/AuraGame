@@ -59,6 +59,10 @@ public:
 	/** Abilities **/
 	FGameplayTag Abilities_Attack;
 	FGameplayTag Abilities_Summon;
+	FGameplayTag Abilities_Fire_FireBolt;
+
+	/** Cooldowns **/
+	FGameplayTag Cooldowns_Fire_FireBolt;
 
 	/** Combat Socket Tags **/
 	FGameplayTag CombatSocket_Weapon;
