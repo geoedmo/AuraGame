@@ -17,6 +17,7 @@ class UAbilitySystemComponent;
 class UAttributeSet;
 
 
+
 UCLASS()
 class AURA_API AAuraHUD : public AHUD
 {
@@ -55,6 +56,8 @@ private:
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UAuraUserWidget> OverlayWidgetClass;
+
+
 
 
 };

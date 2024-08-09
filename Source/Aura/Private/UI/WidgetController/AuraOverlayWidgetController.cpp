@@ -4,6 +4,8 @@
 #include "UI/WidgetController/AuraOverlayWidgetController.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
+#include "Player/AuraPlayerState.h"
+#include "AbilitySystem/Data/LevelUpInfo.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 
 void UAuraOverlayWidgetController::BroadcastInitialValues()
@@ -20,8 +22,28 @@ void UAuraOverlayWidgetController::BroadcastInitialValues()
 void UAuraOverlayWidgetController::BindCallbacksToDependencies()
 {
 	// Added a couple Local variables for doing some work below.
+	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
+	AuraPlayerState->OnXPChangedDelegate.AddUObject(this, &UAuraOverlayWidgetController::ReceiveXPInformation);
+
+	/*
+	[this, AuraPlayerState](int32 XP)
+	{
+		// Find the Percent for the XP Bar
+		// Need to know Current XP, Current Level, and the Max XP for that Level to determine this.
+
+
+
+		int32 PlayerCurrentXP = AuraPlayerState->GetPlayerXP();
+
+		float XPPercent = XP / PlayerCurrentXP * 100;
+
+		// Broadcast XPPerecent to the UI.
+	}
+	*/
+
 	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
 	UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+
 
 	/* Old way of binding callbacks before we learned of the Lambda Expressions
 	* 
@@ -69,42 +91,69 @@ void UAuraOverlayWidgetController::BindCallbacksToDependencies()
 		// Bind to the Delegate telling us the Startup Abilities are given.
 
 		if (AuraASC->bStartupAbilitiesGiven) {
-			
+
 			OnInitializeStartupAbilities(AuraASC);
 
 		}
 		else
-		{ 
+		{
 
 			AuraASC->AbilitiesGivenDelegate.AddUObject(this, &UAuraOverlayWidgetController::OnInitializeStartupAbilities);
 
 		}
 
-			
+		AuraASC->EffectAssetTags.AddLambda(
 
-			AuraASC->EffectAssetTags.AddLambda(
+			[this](const FGameplayTagContainer& AssetTags)
+			{
 
-				[this](const FGameplayTagContainer& AssetTags)
+				for (const FGameplayTag& Tag : AssetTags)
 				{
+					//For example, say that Tag - Message.HealthPotion
+					//"Message.HealthPotion".MatchesTag("Message") will return True, "Message".MatchesTag("Message.HealthPotion") will return False
 
-					for (const FGameplayTag& Tag : AssetTags)
-					{
-						//For example, say that Tag - Message.HealthPotion
-						//"Message.HealthPotion".MatchesTag("Message") will return True, "Message".MatchesTag("Message.HealthPotion") will return False
+					FGameplayTag MessageTag = FGameplayTag::RequestGameplayTag(FName("Message"));
 
-						FGameplayTag MessageTag = FGameplayTag::RequestGameplayTag(FName("Message"));
-
-						if (Tag.MatchesTag(MessageTag)) {
-							FUIWidgetRow* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);
-							MessageWidgetRowDelegate.Broadcast(*Row);
-						}
-
-
+					if (Tag.MatchesTag(MessageTag)) {
+						FUIWidgetRow* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);
+						MessageWidgetRowDelegate.Broadcast(*Row);
 					}
+
 
 				}
 
-			);
+			}
+
+		);
+
+		// Still have the ASC Check here, so Going to bind to XP delegate:
+
+
+	}
+
+
+}
+void UAuraOverlayWidgetController::ReceiveXPInformation(int32 NewXP) const
+{
+	const AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
+	const ULevelUpInfo* LevelUpInfo = AuraPlayerState->LevelUpInfo;
+	checkf(LevelUpInfo, TEXT("Unable to find LevelUpInfo, Please fillout AuraPlayerState Blueprint"));
+
+	const int32 Level = LevelUpInfo->FindLevelForXP(NewXP);
+	const int32 MaxLevel = LevelUpInfo->LevelUpInformation.Num();
+
+	if (Level <= MaxLevel && Level > 0) {
+
+		const int32 LevelUpRequirement = LevelUpInfo->LevelUpInformation[Level].LevelUpRequirement;
+		const int32 PreviousLevelUpRequirement = LevelUpInfo->LevelUpInformation[Level - 1].LevelUpRequirement;
+
+		const int32 DeltaLevelRequirement = LevelUpRequirement - PreviousLevelUpRequirement; // How much XP is in the Current Level's XP Bar
+
+		const int32 XPForThisLevel = NewXP - PreviousLevelUpRequirement; // How much XP currently have for CURRENT level
+
+		const float XPBarPercentForThisLevel = static_cast<float>(XPForThisLevel) / static_cast<float>(DeltaLevelRequirement); // Percent of the Current level's bar filled
+
+		OnXPPercentChangedDelegate.Broadcast(XPBarPercentForThisLevel);
 	}
 
 
