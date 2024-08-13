@@ -32,6 +32,8 @@ AAuraCharacter::AAuraCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
 	Camera->SetupAttachment(SpringArm);
 
+	CharacterClass = ECharacterClass::Elementalist;
+
 }
 
 void AAuraCharacter::PossessedBy(AController* NewController)

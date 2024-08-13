@@ -146,9 +146,7 @@ void UAuraOverlayWidgetController::ReceiveXPInformation(int32 NewXP) const
 
 		const int32 LevelUpRequirement = LevelUpInfo->LevelUpInformation[Level].LevelUpRequirement;
 		const int32 PreviousLevelUpRequirement = LevelUpInfo->LevelUpInformation[Level - 1].LevelUpRequirement;
-
-		const int32 DeltaLevelRequirement = LevelUpRequirement - PreviousLevelUpRequirement; // How much XP is in the Current Level's XP Bar
-
+		const int32 DeltaLevelRequirement = LevelUpRequirement - PreviousLevelUpRequirement; // How much XP Total is in the Current Level's XP Bar
 		const int32 XPForThisLevel = NewXP - PreviousLevelUpRequirement; // How much XP currently have for CURRENT level
 
 		const float XPBarPercentForThisLevel = static_cast<float>(XPForThisLevel) / static_cast<float>(DeltaLevelRequirement); // Percent of the Current level's bar filled
