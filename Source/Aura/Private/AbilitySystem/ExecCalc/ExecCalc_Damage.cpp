@@ -117,16 +117,18 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 		const FGameplayEffectAttributeCaptureDefinition CaptureDef = AuraDamageStatics().TagsToCaptureDefs[ResistanceTag];
 
-		float	DamageTypeValue = Spec.GetSetByCallerMagnitude(Pair.Key);
+		// Might have messed up Resistances?
+			float DamageTypeValue = Spec.GetSetByCallerMagnitude(Pair.Key, false);
 
-		float Resistance = 0.f;
-		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CaptureDef, EvaluationParameters, Resistance);
-		Resistance = FMath::Clamp(Resistance, 0.f, 100.f);
+			float Resistance = 0.f;
+			ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CaptureDef, EvaluationParameters, Resistance);
+			Resistance = FMath::Clamp(Resistance, 0.f, 100.f);
+
+			DamageTypeValue *= (100.f - Resistance) / 100.f;
+
+			Damage += DamageTypeValue;
 
 
-		DamageTypeValue *= (100.f - Resistance) / 100.f;
-
-		Damage += DamageTypeValue;
 	}
 
 	// Calculations of Damage if spell is Blocked

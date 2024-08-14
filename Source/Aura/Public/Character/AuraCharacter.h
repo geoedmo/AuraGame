@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/AuraCharacterBase.h"
+#include "Interaction/AuraPlayerInterface.h"
 #include "AuraCharacter.generated.h"
 
 /**
@@ -13,7 +14,7 @@ class UCameraComponent;
 class USpringArmComponent;
 
 UCLASS()
-class AURA_API AAuraCharacter : public AAuraCharacterBase
+class AURA_API AAuraCharacter : public AAuraCharacterBase, public IAuraPlayerInterface
 {
 
 	GENERATED_BODY()
@@ -29,6 +30,10 @@ public:
 	virtual int32 GetPlayerLevel() override;
 
 	/** </Combat Interface> **/
+
+	/* <Player Interface> */
+	virtual void AddToXP_Implementation(int32 InXP) override;
+	/* </Player Interface> */
 
 protected:
 	virtual void BeginPlay() override;

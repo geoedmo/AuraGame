@@ -32,6 +32,7 @@ public:
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 	/* </AbilitySystemInterface> */
 
+
 	FOnChangePlayerStatChanged OnXPChangedDelegate;
 	FOnChangePlayerStatChanged OnLevelChangedDelegate;
 
