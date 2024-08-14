@@ -36,7 +36,7 @@ UAbilitySystemComponent* AAuraPlayerState::GetAbilitySystemComponent() const
 
 void AAuraPlayerState::OnRep_Level(int32 OldLevel)
 {
-
+	OnLevelChangedDelegate.Broadcast(Level);
 }
 
 void AAuraPlayerState::OnRep_XP(int32 OldXP)
@@ -58,6 +58,16 @@ void AAuraPlayerState::AddToXP(int32 InXP)
 
 	OnXPChangedDelegate.Broadcast(XP);
 
+}
+
+void AAuraPlayerState::AddToAttributePoints(int32 InAttributePoints)
+{
+	AttributePoints += InAttributePoints;
+}
+
+void AAuraPlayerState::AddToSpellPoints(int32 InSpellPoints)
+{
+	SpellPoints += InSpellPoints;
 }
 
 void AAuraPlayerState::SetLevel(int32 InLevel)

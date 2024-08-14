@@ -32,6 +32,7 @@ public:
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 	/* </AbilitySystemInterface> */
 
+	
 
 	FOnChangePlayerStatChanged OnXPChangedDelegate;
 	FOnChangePlayerStatChanged OnLevelChangedDelegate;
@@ -56,6 +57,13 @@ private:
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_XP)
 	int32 XP = 0;
 
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_XP)
+	int32 SpellPoints = 0;
+
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_XP)
+	int32 AttributePoints = 0;
+
+
 	UFUNCTION()
 	void OnRep_Level(int32 OldLevel);
 
@@ -68,11 +76,15 @@ public:
 
 	void SetXP(int32 InXP);
 	void AddToXP(int32 InXP);
-
+	void AddToAttributePoints(int32 InAttributePoints);
+	void AddToSpellPoints(int32 InSpellPoints);
 
 	void SetLevel(int32 InLevel);
 	void AddToLevel(int32 InLevel);
 
 	FORCEINLINE int32 GetPlayerXP() const { return XP; }
 	FORCEINLINE int32 GetPlayerLevel() const { return Level; }
+
+	FORCEINLINE int32 GetPlayerAttributePoints() const { return AttributePoints; }
+	FORCEINLINE int32 GetPlayerSpellPoints() const { return SpellPoints; }
 };

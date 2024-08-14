@@ -145,9 +145,44 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		const float LocalIncomingXP = GetIncomingXP();
 		SetIncomingXP(0);
 		
-		UE_LOG(LogAura, Log, TEXT("Incoming XP %f"), LocalIncomingXP);
-		
-		if (Props.SourceCharacter->Implements<UAuraPlayerInterface>()) {
+
+
+		if (Props.SourceCharacter->Implements<UAuraPlayerInterface>() && Props.SourceCharacter->Implements<UCombatInterface>()) {
+
+
+			// TODO: Check and see if we should level-up.
+			int32 CurrentLevel = ICombatInterface::Execute_GetPlayerLevel(Props.SourceCharacter);
+			int32 CurrentXP = IAuraPlayerInterface::Execute_GetXP(Props.SourceCharacter);
+			int32 NewLevel = IAuraPlayerInterface::Execute_FindLevelForIncomingXP(Props.SourceCharacter, CurrentXP + LocalIncomingXP);
+			int32 NewXP = LocalIncomingXP + CurrentXP;
+			int32 NumLevelsGained = NewLevel - CurrentLevel;
+
+			if (NumLevelsGained > 0) {
+
+				IAuraPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter, NumLevelsGained);
+
+				for (int i = 0; i < NumLevelsGained; i++)
+				{
+					// Get Each New Level's Attribute/Spell Points Awarded
+					int32 AttributePointsAwarded = IAuraPlayerInterface::Execute_GetAttributePointsRewarded(Props.SourceCharacter, CurrentLevel);
+					int32 SpellPointsAwarded = IAuraPlayerInterface::Execute_GetAttributePointsRewarded(Props.SourceCharacter, CurrentLevel);
+					IAuraPlayerInterface::Execute_AddToAttributePoints(Props.SourceCharacter, AttributePointsAwarded);
+					IAuraPlayerInterface::Execute_AddToSpellPoints(Props.SourceCharacter, SpellPointsAwarded);
+
+					//Add 1 to Current Level since we're definitely gaining 1 or more levels, we need the next level's Rewards, not this current one.
+					CurrentLevel++;
+				}
+
+				int32 TotalAttributePoints = IAuraPlayerInterface::Execute_GetAttributePoints(Props.SourceCharacter);
+				int32 TotalSpellPoints = IAuraPlayerInterface::Execute_GetSpellPoints(Props.SourceCharacter);
+
+				//FillUpHealthAndMana
+				SetHealth(GetMaxHealth());
+				SetMana(GetMaxMana());
+
+				IAuraPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
+			}
+
 
 			IAuraPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);
 
@@ -211,21 +246,20 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 
 void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
 {
-	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetCharacter);
-	if (CombatInterface) {
-		
-		const int32 TargetLevel = CombatInterface->GetPlayerLevel();
-		const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(Props.TargetCharacter);
+	if (Props.TargetCharacter->Implements<UCombatInterface>()) {
+			
+	const int32 TargetLevel = ICombatInterface::Execute_GetPlayerLevel(Props.TargetCharacter);
+	const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(Props.TargetCharacter);
 
-		const int32 XPReward = UAuraAbilitySystemLibrary::GetXPForCharacterClassAndLevel(Props.TargetCharacter, TargetClass, TargetLevel);
+	const int32 XPReward = UAuraAbilitySystemLibrary::GetXPForCharacterClassAndLevel(Props.TargetCharacter, TargetClass, TargetLevel);
 
-		// Send gameplay event that is listened to by the Gameplay ability listen for events
-		const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
-		FGameplayEventData Payload;
-		Payload.EventTag = GameplayTags.Attributes_Meta_IncomingXP;
-		Payload.EventMagnitude = XPReward;
+	// Send gameplay event that is listened to by the Gameplay ability listen for events
+	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
+	FGameplayEventData Payload;
+	Payload.EventTag = GameplayTags.Attributes_Meta_IncomingXP;
+	Payload.EventMagnitude = XPReward;
 
-		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Props.SourceCharacter, GameplayTags.Attributes_Meta_IncomingXP, Payload);
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Props.SourceCharacter, GameplayTags.Attributes_Meta_IncomingXP, Payload);
 	}
 
 }
