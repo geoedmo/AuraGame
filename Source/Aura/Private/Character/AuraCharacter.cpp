@@ -10,13 +10,28 @@
 #include "AbilitySystem/Data/LevelUpInfo.h"
 #include "Player/AuraPlayerState.h"
 #include "Player/AuraPlayerController.h"
-
+#include "NiagaraComponent.h"
 #include "UI/WidgetController/AuraWidgetController.h"
 
 
 
 AAuraCharacter::AAuraCharacter()
 {
+
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
+	SpringArm->SetupAttachment(GetRootComponent());
+	SpringArm->SetUsingAbsoluteRotation(true);
+	SpringArm->bDoCollisionTest = false;
+
+	
+	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
+	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
+	Camera->bUsePawnControlRotation = false;
+
+
+	LevelUpNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>("Level Up Niagara Component");
+	LevelUpNiagaraComponent->SetupAttachment(GetRootComponent());
+	LevelUpNiagaraComponent->bAutoActivate = false;
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 400.f, 0.f);
@@ -27,11 +42,7 @@ AAuraCharacter::AAuraCharacter()
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
 
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
-	SpringArm->SetupAttachment(GetRootComponent());
 
-	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
-	Camera->SetupAttachment(SpringArm);
 
 	CharacterClass = ECharacterClass::Elementalist;
 
@@ -87,7 +98,21 @@ int32 AAuraCharacter::FindLevelForIncomingXP_Implementation(int32 InXP)
 
 void AAuraCharacter::LevelUp_Implementation()
 {
+	MulticastLevelUpParticles();
+}
 
+void AAuraCharacter::MulticastLevelUpParticles_Implementation() const
+{
+	if (IsValid(LevelUpNiagaraComponent)) {
+
+		// Orientate the Niagara System towards the Player Character's Camera
+		const FVector CameraLocation = Camera->GetComponentLocation();
+		const FVector NiagaraSystemLocation = LevelUpNiagaraComponent->GetComponentLocation();
+		const FRotator ToCameraLocation = (CameraLocation - NiagaraSystemLocation).Rotation();
+
+		LevelUpNiagaraComponent->SetWorldRotation(ToCameraLocation);
+		LevelUpNiagaraComponent->Activate(true);
+	}
 }
 
 void AAuraCharacter::AddToPlayerLevel_Implementation(int32 InNumLevels)
@@ -159,3 +184,5 @@ void AAuraCharacter::InitAbilityActorInfo()
 	InitializeDefaultAttributes();
 
 }
+
+

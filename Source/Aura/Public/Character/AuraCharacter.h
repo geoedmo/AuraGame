@@ -13,6 +13,7 @@
 class UCameraComponent;
 class AAuraPlayerState;
 class USpringArmComponent;
+class UNiagaraComponent;
 
 UCLASS()
 class AURA_API AAuraCharacter : public AAuraCharacterBase, public IAuraPlayerInterface
@@ -54,11 +55,13 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;	
 
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;
 
 private:
 
-
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastLevelUpParticles() const;
 
 	UPROPERTY(EditAnywhere, Category = Settings)
 	UCameraComponent* Camera;

@@ -25,25 +25,16 @@ void UAuraOverlayWidgetController::BindCallbacksToDependencies()
 	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
 	AuraPlayerState->OnXPChangedDelegate.AddUObject(this, &UAuraOverlayWidgetController::ReceiveXPInformation);
 
-	/*
-	[this, AuraPlayerState](int32 XP)
-	{
-		// Find the Percent for the XP Bar
-		// Need to know Current XP, Current Level, and the Max XP for that Level to determine this.
-
-
-
-		int32 PlayerCurrentXP = AuraPlayerState->GetPlayerXP();
-
-		float XPPercent = XP / PlayerCurrentXP * 100;
-
-		// Broadcast XPPerecent to the UI.
-	}
-	*/
-
 	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
 	UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 
+	AuraPlayerState->OnLevelChangedDelegate.AddLambda(
+		[this](int32 NewLevel) {
+
+			OnPlayerLevelChangedDelegate.Broadcast(NewLevel);
+
+		}
+	);
 
 	/* Old way of binding callbacks before we learned of the Lambda Expressions
 	* 
