@@ -11,6 +11,7 @@
 #include "Player/AuraPlayerState.h"
 #include "Player/AuraPlayerController.h"
 #include "NiagaraComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "UI/WidgetController/AuraWidgetController.h"
 
 
@@ -112,6 +113,14 @@ void AAuraCharacter::MulticastLevelUpParticles_Implementation() const
 
 		LevelUpNiagaraComponent->SetWorldRotation(ToCameraLocation);
 		LevelUpNiagaraComponent->Activate(true);
+	}
+
+	if (IsValid(LevelUpSound)) {
+
+		UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(),
+			LevelUpSound,
+			GetActorLocation());
 	}
 }
 

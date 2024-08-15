@@ -14,6 +14,7 @@ class UCameraComponent;
 class AAuraPlayerState;
 class USpringArmComponent;
 class UNiagaraComponent;
+class USoundBase;
 
 UCLASS()
 class AURA_API AAuraCharacter : public AAuraCharacterBase, public IAuraPlayerInterface
@@ -55,8 +56,11 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;	
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LevelUp")
 	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;
+
+	UPROPERTY(EditDefaultsOnly, Category = "LevelUp")
+	TObjectPtr<USoundBase> LevelUpSound;
 
 private:
 
