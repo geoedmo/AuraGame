@@ -15,6 +15,7 @@ class IEnemyInteraction;
 class UAuraInputConfig;
 class UAuraAbilitySystemComponent;
 class USplineComponent;
+class AAuraPlayerState;
 class UDamageTextComponent;
 
 
@@ -25,6 +26,9 @@ class AURA_API AAuraPlayerController : public APlayerController
 	
 public:
 	AAuraPlayerController();
+
+
+
 	virtual void PlayerTick(float DeltaTime) override;
 
 	UFUNCTION(Client, Reliable)
@@ -32,6 +36,9 @@ public:
 
 
 protected:
+
+
+
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
@@ -43,8 +50,9 @@ private:
 	bool bAutoRunning = false;
 	bool bTargeting = false;
 	FHitResult CursorHit;
-
 	bool bShiftKeyDown;
+
+	TObjectPtr<AAuraPlayerState> AuraPlayerState;
 
 	UPROPERTY(EditDefaultsOnly)
 	float AutoRunAcceptanceRadius = 50.f;
@@ -75,6 +83,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UAuraInputConfig> AuraInputConfig;
+
+
+
 	void AbilityInputTagPressed(FGameplayTag InputTag);
 	void AbilityInputTagReleased(FGameplayTag InputTag);
 	void AbilityInputTagHeld(FGameplayTag InputTag);

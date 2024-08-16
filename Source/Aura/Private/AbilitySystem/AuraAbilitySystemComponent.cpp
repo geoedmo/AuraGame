@@ -5,6 +5,8 @@
 #include "AbilitySystemComponent.h"
 #include "Aura/AuraLogChannels.h"
 #include "AbilitySystem/Abilities/AuraGameplayAbility.h"
+#include "Interaction/AuraPlayerInterface.h"
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AuraGameplayTags.h"
 void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 {
@@ -37,6 +39,32 @@ void UAuraAbilitySystemComponent::AddCharacterPassiveAbilities(TArray<TSubclassO
 	{
 		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
 		GiveAbilityAndActivateOnce(AbilitySpec);
+	}
+}
+
+void UAuraAbilitySystemComponent::UpgradeAttributes(const FGameplayTag& AttibuteTag)
+{
+	if (GetAvatarActor()->Implements<UAuraPlayerInterface>()) {
+
+		if (IAuraPlayerInterface::Execute_GetAttributePoints(GetAvatarActor()) > 0) {
+
+			ServerUpgradeAttributes(AttibuteTag);
+		}
+
+	}
+}
+
+void UAuraAbilitySystemComponent::ServerUpgradeAttributes_Implementation(const FGameplayTag& AttibuteTag)
+{
+	FGameplayEventData Payload;
+	Payload.EventTag = AttibuteTag;
+	Payload.EventMagnitude = 1.f;
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetAvatarActor(), AttibuteTag, Payload);
+
+	// Spend the Points!
+	if (GetAvatarActor()->Implements<UAuraPlayerInterface>()) {
+		IAuraPlayerInterface::Execute_AddToAttributePoints(GetAvatarActor(), -1);
 	}
 }
 

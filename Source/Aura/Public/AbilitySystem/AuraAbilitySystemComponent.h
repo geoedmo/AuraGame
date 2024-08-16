@@ -15,6 +15,7 @@ DECLARE_DELEGATE_OneParam(FForEachAbility, const FGameplayAbilitySpec&);
  * 
  */
 class UGameplayAbility;
+struct FGameplayTag;
 
 UCLASS()
 class AURA_API UAuraAbilitySystemComponent : public UAbilitySystemComponent
@@ -30,6 +31,12 @@ public:
 	void AddCharacterAbilities(TArray<TSubclassOf<UGameplayAbility>> StartupAbilities);
 
 	void AddCharacterPassiveAbilities(TArray<TSubclassOf<UGameplayAbility>> StartupPassiveAbilities);
+
+	void UpgradeAttributes(const FGameplayTag& AttibuteTag);
+
+	UFUNCTION(Server, Reliable)
+	void ServerUpgradeAttributes(const FGameplayTag& AttibuteTag);
+
 
 	bool bStartupAbilitiesGiven = false;
 

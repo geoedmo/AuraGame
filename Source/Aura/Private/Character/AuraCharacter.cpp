@@ -116,11 +116,7 @@ void AAuraCharacter::MulticastLevelUpParticles_Implementation() const
 	}
 
 	if (IsValid(LevelUpSound)) {
-
-		UGameplayStatics::PlaySoundAtLocation(
-			GetWorld(),
-			LevelUpSound,
-			GetActorLocation());
+		UGameplayStatics::PlaySound2D( GetWorld(), LevelUpSound);
 	}
 }
 
@@ -174,6 +170,7 @@ void AAuraCharacter::BeginPlay()
 
 void AAuraCharacter::InitAbilityActorInfo()
 {
+	AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
 	AuraPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(AuraPlayerState, this);
 	Cast<UAuraAbilitySystemComponent>(AuraPlayerState->GetAbilitySystemComponent())->AbilityActorInfoSet();

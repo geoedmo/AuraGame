@@ -48,6 +48,9 @@ UAuraAttributeSet::UAuraAttributeSet()
 void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
+
 	//Vital Rep Props:
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, Health, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, Mana, COND_None, REPNOTIFY_Always);
@@ -177,11 +180,18 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				int32 TotalSpellPoints = IAuraPlayerInterface::Execute_GetSpellPoints(Props.SourceCharacter);
 
 				//FillUpHealthAndMana
+				bTopOffHealth = true;
+				bTopOffMana = true;
+
 				SetHealth(GetMaxHealth());
 				SetMana(GetMaxMana());
 
 				IAuraPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
+
+
+			
 			}
+
 
 
 			IAuraPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);
@@ -189,6 +199,21 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		}
 
 	}
+}
+void UAuraAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
+{
+	Super::PostAttributeChange(Attribute, OldValue, NewValue);
+	
+	if (Attribute == GetMaxHealthAttribute() && bTopOffHealth) {
+		SetHealth(GetMaxHealth());
+		bTopOffHealth = false;
+	}
+
+	if (Attribute == GetMaxManaAttribute() && bTopOffMana) {
+		SetMana(GetMaxMana());
+		bTopOffMana = false;
+	}
+
 }
 void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool bCriticalHit) const
 {

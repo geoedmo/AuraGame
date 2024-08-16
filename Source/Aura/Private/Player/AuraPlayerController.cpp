@@ -13,6 +13,7 @@
 #include "Interaction/EnemyInteraction.h"
 #include "NavigationSystem.h"
 #include "GameFramework/Character.h"
+#include "Player/AuraPlayerState.h"
 #include "UI/Widget/DamageTextComponent.h"
 #include "NavigationPath.h"
 
@@ -46,8 +47,9 @@ void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, 
 }
 
 void AAuraPlayerController::AutoRun()
-{	
+{
 	if (!bAutoRunning) return;
+
 	if (APawn* ControlledPawn = GetPawn())
 	{
 
@@ -81,6 +83,8 @@ void AAuraPlayerController::BeginPlay()
 	Subsystem->AddMappingContext(AuraContext, 0);
 	}
 
+	AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
+	check(PlayerState);
 
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
@@ -130,6 +134,7 @@ void AAuraPlayerController::CursorTrace()
 {
 
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+
 	if (!CursorHit.bBlockingHit) return;
 
 	LastActor = ThisActor; // this is being done before, so logically first
@@ -229,6 +234,8 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 
 	if (!bTargeting && !bShiftKeyDown)
 	{
+		bool bIsCurrentlyInMenus = AuraPlayerState->GetMenuStatus();
+		if (bIsCurrentlyInMenus) return;
 
 		const APawn* ControlledPawn = GetPawn();
 		if (FollowTime <= ShortPressThreshold && ControlledPawn) {
@@ -278,6 +285,9 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 	} 
 	else {
 
+		bool bIsCurrentlyInMenus = AuraPlayerState->GetMenuStatus();
+		if (bIsCurrentlyInMenus) return;
+
 		FollowTime += GetWorld()->GetDeltaSeconds();
 
 		if (CursorHit.bBlockingHit) {
@@ -297,8 +307,6 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 		}
 
 	}
-
-
 
 }
 
