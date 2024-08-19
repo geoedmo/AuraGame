@@ -13,24 +13,24 @@
 void UAuraMenuWidgetController::BindCallbacksToDependencies()
 {
 
-	UAuraAttributeSet* AS = CastChecked<UAuraAttributeSet>(AttributeSet);
+	AuraAttributeSet = GetAuraAS();
 	check(AttributeInfo);
 
-	for (auto& Pair : AS->TagsToAttributes)
+	for (auto& Pair : AuraAttributeSet->TagsToAttributes)
 	{
 	
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Value()).AddLambda(
-			[this, Pair, AS](const FOnAttributeChangeData& Data) {
+			[this, Pair](const FOnAttributeChangeData& Data) {
 
 				FAuraAttributeData Info = AttributeInfo->FindAttributeInfoForTag(Pair.Key);
-				Info.AttributeValue = Pair.Value().GetNumericValue(AS);
+				Info.AttributeValue = Pair.Value().GetNumericValue(AuraAttributeSet);
 				AttributeDataDelegate.Broadcast(Info);
 			}
 
 		);
 	}
 
-	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
+	AuraPlayerState = GetAuraPS();
 
 	AuraPlayerState->OnAttributePointsChangedDelegate.AddLambda(
 		[this](int32 AttributePoints) {
@@ -59,14 +59,14 @@ void UAuraMenuWidgetController::BroadcastInitialValues()
 	}
 
 	/** Broadcast Initial Values for SpellPoints and Attribute Points **/
-	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
+	AuraPlayerState = GetAuraPS();
 	OnAttributePointsChangedSignature.Broadcast(AuraPlayerState->GetPlayerAttributePoints());
 	OnSpellPointsChangedSignature.Broadcast(AuraPlayerState->GetPlayerSpellPoints());
 }
 
 bool UAuraMenuWidgetController::CheckForAttributePoints()
 {
-	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
+	AuraPlayerState = GetAuraPS();
 
 	bool bPlayerHasAttributePoints = AuraPlayerState->GetPlayerAttributePoints() > 0;
 
@@ -80,7 +80,7 @@ bool UAuraMenuWidgetController::CheckForAttributePoints()
 
 void UAuraMenuWidgetController::SetActiveInMenu(bool InMenuStatus)
 {
-	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
+	AuraPlayerState = GetAuraPS();
 
 	AuraPlayerState->SetInMenus(InMenuStatus);
 }

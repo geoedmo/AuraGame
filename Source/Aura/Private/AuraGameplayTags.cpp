@@ -131,6 +131,14 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName("InputTag.4"),
 		FString("Input tag for Button 4")
 	);
+	GameplayTags.InputTag_Passive_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.Passive.1"),
+		FString("Input tag for Passive Ability 1")
+	);
+	GameplayTags.InputTag_Passive_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.Passive.2"),
+		FString("Input tag for Passive Ability 2")
+	);
 
 
 	/*
@@ -149,6 +157,46 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Abilities_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.Fire.FireBolt"),
 		FString("FireBolt Ability Tag")
+	);
+
+	GameplayTags.Abilities_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.HitReact"),
+		FString("HitReact Ability Tag")
+	);
+
+	GameplayTags.Abilities_Status_Locked = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Status.Locked"),
+		FString("Locked Status Ability Tag")
+	);
+
+	GameplayTags.Abilities_Status_Unlocked = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Status.Unlocked"),
+		FString("Unlocked Status Ability Tag")
+	);
+
+	GameplayTags.Abilities_Status_Eligible = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Status.Eligible"),
+		FString("Eligible Status Ability Tag")
+	);
+
+	GameplayTags.Abilities_Status_Equipped = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Status.Equipped"),
+		FString("Equipped Status Ability Tag")
+	);
+
+	GameplayTags.Abilities_Status_Offensive = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Status.Offensive"),
+		FString("Offensive Status Ability Tag")
+	);
+
+	GameplayTags.Abilities_Status_Passive = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Status.Passive"),
+		FString("Passive Status Ability Tag")
+	);
+
+	GameplayTags.Abilities_Status_None = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Status.None"),
+		FString("No Status Ability Tag")
 	);
 
 	/*
