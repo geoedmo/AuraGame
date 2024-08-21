@@ -37,11 +37,6 @@ void UAuraMenuWidgetController::BindCallbacksToDependencies()
 			OnAttributePointsChangedSignature.Broadcast(AttributePoints);
 		});
 
-	AuraPlayerState->OnSpellPointsChangedDelegate.AddLambda(
-		[this](int32 SpellPoints) {
-			OnSpellPointsChangedSignature.Broadcast(SpellPoints);
-		});
-
 }
 
 void UAuraMenuWidgetController::BroadcastInitialValues()
@@ -61,7 +56,7 @@ void UAuraMenuWidgetController::BroadcastInitialValues()
 	/** Broadcast Initial Values for SpellPoints and Attribute Points **/
 	AuraPlayerState = GetAuraPS();
 	OnAttributePointsChangedSignature.Broadcast(AuraPlayerState->GetPlayerAttributePoints());
-	OnSpellPointsChangedSignature.Broadcast(AuraPlayerState->GetPlayerSpellPoints());
+
 }
 
 bool UAuraMenuWidgetController::CheckForAttributePoints()

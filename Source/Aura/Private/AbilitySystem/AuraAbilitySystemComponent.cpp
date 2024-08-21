@@ -6,7 +6,9 @@
 #include "Aura/AuraLogChannels.h"
 #include "AbilitySystem/Abilities/AuraGameplayAbility.h"
 #include "Interaction/AuraPlayerInterface.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystem/Data/AbilityInfo.h"
 #include "AuraGameplayTags.h"
 void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 {
@@ -54,6 +56,49 @@ void UAuraAbilitySystemComponent::UpgradeAttributes(const FGameplayTag& Attibute
 	}
 }
 
+void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
+{
+	UAbilityInfo* AbilityInfo = UAuraAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor());
+
+	for (const FAuraAbilityInfo& Info : AbilityInfo->AbilityInformation)
+	{
+		if (!Info.AbilityTag.IsValid()) continue;
+		if (Level < Info.RequiredLevel) continue;
+
+		if (GetSpecFromAbilityTag(Info.AbilityTag) == nullptr) {
+			
+			// The spec went into GetSpecFromAbilityTag() and returned nullptr which means it didn't have an ability spec and was 
+			// not yet a granted ability to this ASC, so make one and then give immediately. Afterwards, broadcast to the
+			// Spell Menu that this was granted and the status is now Eligible.
+			FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Info.Ability, 1);
+			AbilitySpec.DynamicAbilityTags.AddTag(FAuraGameplayTags::Get().Abilities_Status_Eligible);
+			GiveAbility(AbilitySpec);
+			MarkAbilitySpecDirty(AbilitySpec);
+			ClientUpdateAbilityStatus(Info.AbilityTag, FAuraGameplayTags::Get().Abilities_Status_Eligible);
+		}
+
+
+	}
+}
+
+FGameplayAbilitySpec* UAuraAbilitySystemComponent::GetSpecFromAbilityTag(const FGameplayTag& AbilityTag)
+{
+	FScopedAbilityListLock AbilityListLocked(*this);
+	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{
+
+		for (FGameplayTag Tag : AbilitySpec.Ability.Get()->AbilityTags) {
+
+			if (Tag.MatchesTag(AbilityTag)) {
+				return &AbilitySpec;
+			}
+		
+		}
+	}
+	
+	return nullptr;
+
+}
 void UAuraAbilitySystemComponent::ServerUpgradeAttributes_Implementation(const FGameplayTag& AttibuteTag)
 {
 	FGameplayEventData Payload;
@@ -153,6 +198,7 @@ FGameplayTag UAuraAbilitySystemComponent::GetStatusFromSpec(const FGameplayAbili
 	return FGameplayTag();
 }
 
+
 void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
 {
 	Super::OnRep_ActivateAbilities();
@@ -165,6 +211,11 @@ void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
 
 
 
+}
+
+void UAuraAbilitySystemComponent::ClientUpdateAbilityStatus_Implementation(const FGameplayTag& AbilityTag, const FGameplayTag& AbilityStatusTag)
+{
+	AbilityStatusChangedDelegate.Broadcast(AbilityTag, AbilityStatusTag);
 }
 
 

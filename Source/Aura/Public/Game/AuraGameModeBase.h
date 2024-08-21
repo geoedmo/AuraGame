@@ -11,6 +11,7 @@
  */
 
 class UCharacterClassInfo;
+class UAbilityInfo;
 
 UCLASS()
 class AURA_API AAuraGameModeBase : public AGameModeBase
@@ -22,5 +23,6 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Character Class Info")
 	TObjectPtr<UCharacterClassInfo> CharacterClassInfo;
 
-	
+	UPROPERTY(EditAnywhere, Category = "Character Class Info")
+	TObjectPtr<UAbilityInfo> AbilityInfo;
 };

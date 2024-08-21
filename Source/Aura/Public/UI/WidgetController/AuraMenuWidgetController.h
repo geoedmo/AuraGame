@@ -7,8 +7,7 @@
 #include "AuraMenuWidgetController.generated.h"
 
 
-struct FAuraAttributeData;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttributeDataSignature, const FAuraAttributeData&, Info);
+
 
 
 class UAuraAttributeInfo;
@@ -40,8 +39,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnAttributeChangedSignature OnAttributePointsChangedSignature;
 
-	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
-	FOnAttributeChangedSignature OnSpellPointsChangedSignature;
+
 
 
 
