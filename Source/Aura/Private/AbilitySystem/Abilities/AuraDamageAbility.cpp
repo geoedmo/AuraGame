@@ -4,6 +4,7 @@
 #include "AbilitySystem/Abilities/AuraDamageAbility.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AuraGameplayTags.h"
 #include "Interaction/CombatInterface.h"
 
 
@@ -33,4 +34,10 @@ FTaggedMontage UAuraDamageAbility::GetRandomMontageFromArray(const TArray<FTagge
 
 	}
 	return FTaggedMontage();
+}
+
+float UAuraDamageAbility::GetDamageByDamageType(float InLevel, const FGameplayTag& DamageType)
+{
+	checkf(DamageTypes.Contains(DamageType), TEXT("Gameplay Ability [%s] does not contain DamageType [%s]"), *GetNameSafe(this), *DamageType.ToString());
+	return DamageTypes[DamageType].GetValueAtLevel(InLevel);
 }

@@ -62,6 +62,7 @@ public:
 	FGameplayTag InputTag_Passive_2;
 
 	/** Abilities **/
+	FGameplayTag Abilities_None;
 	FGameplayTag Abilities_Attack;
 	FGameplayTag Abilities_Summon;
 	FGameplayTag Abilities_Fire_FireBolt;

@@ -90,4 +90,6 @@ protected:
 
 private:
 
+public:
+	UWidgetComponent* GetHealthBar_Implementation() { return EnemyHealthBar; }
 };

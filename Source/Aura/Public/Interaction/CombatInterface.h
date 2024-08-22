@@ -42,6 +42,7 @@ class UCombatInterface : public UInterface
  * 
  */
 class UAnimMontage;
+class UWidgetComponent;
 
 class AURA_API ICombatInterface
 {
@@ -55,6 +56,8 @@ public:
 
 	//Stuff Fixed:
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	UWidgetComponent* GetHealthBar();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	ECharacterClass GetCharacterClass();
