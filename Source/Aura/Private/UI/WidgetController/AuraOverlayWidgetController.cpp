@@ -6,6 +6,8 @@
 #include "Player/AuraPlayerState.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
 #include "AbilitySystem/AuraAttributeSet.h"
+#include "AbilitySystem/Data/AbilityInfo.h"
+#include "AuraGameplayTags.h"
 
 void UAuraOverlayWidgetController::BroadcastInitialValues()
 {
@@ -19,6 +21,9 @@ void UAuraOverlayWidgetController::BroadcastInitialValues()
 
 void UAuraOverlayWidgetController::BindCallbacksToDependencies()
 {
+
+	GetAuraASC()->AbilityEquippedDelegate.AddUObject(this, &UAuraOverlayWidgetController::OnAbilityEquipped);
+
 	// Added a couple Local variables for doing some work below.
 	AuraPlayerState = GetAuraPS();
 	AuraPlayerState->OnXPChangedDelegate.AddUObject(this, &UAuraOverlayWidgetController::ReceiveXPInformation);
@@ -143,6 +148,28 @@ void UAuraOverlayWidgetController::ReceiveXPInformation(int32 NewXP)
 		OnXPPercentChangedDelegate.Broadcast(XPBarPercentForThisLevel);
 	}
 
+
+}
+
+void UAuraOverlayWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PrevSlot) const
+{
+
+	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
+
+	FAuraAbilityInfo LastSlotInfo;
+
+	LastSlotInfo.StatusTag = GameplayTags.Abilities_Status_Unlocked;
+	LastSlotInfo.InputTag = PrevSlot;
+	LastSlotInfo.AbilityTag = GameplayTags.Abilities_None;
+
+	// Broadcast Empty info if Prev Slot is a Valid Slot
+	AbilityInfoDelegate.Broadcast(LastSlotInfo);
+
+	FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
+
+	Info.StatusTag = Status;
+	Info.InputTag = Slot;
+	AbilityInfoDelegate.Broadcast(Info);
 
 }
 
