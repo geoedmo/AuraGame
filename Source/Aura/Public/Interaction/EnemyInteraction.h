@@ -15,6 +15,7 @@ class UEnemyInteraction : public UInterface
 /**
  * 
  */
+class UWidgetComponent;
 class AURA_API IEnemyInteraction
 {
 	GENERATED_BODY()
@@ -31,5 +32,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	AActor* GetCombatTarget() const;
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	UWidgetComponent* GetHealthBar();
 
 };

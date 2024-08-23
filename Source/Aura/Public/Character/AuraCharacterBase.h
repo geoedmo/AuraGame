@@ -115,6 +115,7 @@ protected:
 	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
 
 	void Dissolve();
+	void RemoveEnemyHealthBar();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
@@ -126,9 +127,7 @@ protected:
 	/* Minions */
 
 	int32 MinionCount = 0;
-
 	bool CastingSummon = false;
-
 
 private:
 
@@ -138,7 +137,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray <TSubclassOf<UGameplayAbility>> StartupPassiveAbilities;
 
-
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<UAnimMontage> HitReactMontage;
+
 };

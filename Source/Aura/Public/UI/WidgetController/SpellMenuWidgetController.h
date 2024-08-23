@@ -40,6 +40,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SpendSpellPoint();
 
+	UFUNCTION(BlueprintCallable)
+	void GlobeDeselect();
 
 	UFUNCTION(BlueprintCallable)
 	void SpellGlobeSelected (const FGameplayTag& AbilityTag);

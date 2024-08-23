@@ -7,6 +7,7 @@
 #include "AuraGameplayTags.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Interaction/EnemyInteraction.h"
 #include "Aura/Aura.h"
 
 
@@ -65,18 +66,20 @@ void AAuraCharacterBase::MutlicastHandleDeath_Implementation()
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-
-
 	Dissolve();
 
 	// Enemy Health Bar falls through the floor, this is the solution:
-	if (this->Implements<UCombatInterface>()) {
-		UWidgetComponent* EnemyHealthBar = ICombatInterface::Execute_GetHealthBar(this);
-		EnemyHealthBar->SetVisibility(false);
-	}
-
+	RemoveEnemyHealthBar();
 	bDead = true;
+}
+
+void AAuraCharacterBase::RemoveEnemyHealthBar()
+{
+	if (this->Implements<UEnemyInteraction>()) {
+		UWidgetComponent* EnemyHealthBar = IEnemyInteraction::Execute_GetHealthBar(this);
+		EnemyHealthBar->SetVisibility(false);
+		EnemyHealthBar->DestroyComponent();
+	}
 }
 
 void AAuraCharacterBase::BeginPlay()
