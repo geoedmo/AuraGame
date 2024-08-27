@@ -13,6 +13,7 @@
  */
 class USpellMenuWidgetController;
 class UOverlayWidgetController;
+struct FDamageEffectParams;
 struct FWidgetControllerParams;
 
 UCLASS()
@@ -66,6 +67,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|GameplayMechanics")
 	static int32 GetXPForCharacterClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 Level);
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|DamageEffect")
+	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
 
 
 };

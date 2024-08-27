@@ -5,6 +5,7 @@
 #include "Actor/AuraProjectile.h"
 #include "Interaction/CombatInterface.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AuraGameplayTags.h"
 #include "GameplayEffect.h"
@@ -43,6 +44,14 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		Cast<APawn>(GetOwningActorFromActorInfo()),
 		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn
 	);
+
+	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
+
+	Projectile->FinishSpawning(SpawnTransform);
+
+
+}
+/*
 	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 	FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
 
@@ -62,16 +71,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
 
 
-	for (auto& Pair : DamageTypes) {
+	const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(ProjectileSpecHandle, DamageType, ScaledDamage);
 
-		const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(ProjectileSpecHandle, Pair.Key, ScaledDamage);
-
-	}
-
-	Projectile->DamageEffectSpecHandle = ProjectileSpecHandle;
-
-	Projectile->FinishSpawning(SpawnTransform);
-
-
-}
+	Projectile->DamageEffectSpecHandle = ProjectileSpecHandle; */

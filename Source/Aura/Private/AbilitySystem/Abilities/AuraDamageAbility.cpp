@@ -13,16 +13,29 @@ void UAuraDamageAbility::CauseDamage(AActor* TargetActor)
 
 	FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, 1.f);
 
-	for (TTuple<FGameplayTag, FScalableFloat> Pair : DamageTypes)
-	{
+	const float DamageMagnitude = Damage.GetValueAtLevel(GetAbilityLevel());
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageEffectSpecHandle, DamageType, DamageMagnitude);
 
-		const float DamageMagnitude = Pair.Value.GetValueAtLevel(GetAbilityLevel());
-		
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageEffectSpecHandle, Pair.Key, DamageMagnitude);
-		
-	}
 
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data.Get(), UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
+}
+
+FDamageEffectParams UAuraDamageAbility::MakeDamageEffectParamsFromClassDefaults(AActor* Target)
+{
+	FDamageEffectParams Params;
+	Params.WorldContextObject = GetAvatarActorFromActorInfo();
+	Params.DamageGameplayEffectClass = DamageEffectClass;
+	Params.SourceAbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
+	Params.TargetAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Target);
+	Params.BaseDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+	Params.AbilityLevel = GetAbilityLevel();
+	Params.DamageType = DamageType;
+	Params.DebuffChance = DebuffChance;
+	Params.DebuffDamage = DebuffDamage;
+	Params.DebuffDuration = DebuffDuration;
+	Params.DebuffFrequency = DebuffFrequency;
+
+	return Params;
 }
 
 FTaggedMontage UAuraDamageAbility::GetRandomMontageFromArray(const TArray<FTaggedMontage>& TaggedMontage) const
@@ -36,8 +49,3 @@ FTaggedMontage UAuraDamageAbility::GetRandomMontageFromArray(const TArray<FTagge
 	return FTaggedMontage();
 }
 
-float UAuraDamageAbility::GetDamageByDamageType(float InLevel, const FGameplayTag& DamageType)
-{
-	checkf(DamageTypes.Contains(DamageType), TEXT("Gameplay Ability [%s] does not contain DamageType [%s]"), *GetNameSafe(this), *DamageType.ToString());
-	return DamageTypes[DamageType].GetValueAtLevel(InLevel);
-}

@@ -158,14 +158,11 @@ void USpellMenuWidgetController::ShouldEnableButtons(const FGameplayTag& Ability
 		if (SpellPoints > 0) {
 			bShouldEnableSpellPointsButton = true;
 		}
-
 	}
 	else if (AbilityStatus.MatchesTagExact(GameplayTags.Abilities_Status_Eligible))
 	{
 		if (SpellPoints > 0) {
-
 			bShouldEnableSpellPointsButton = true;
-
 		}
 	}
 	else if (AbilityStatus.MatchesTagExact(GameplayTags.Abilities_Status_Unlocked)) 

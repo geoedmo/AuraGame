@@ -102,8 +102,21 @@ public:
 	FGameplayTag Damage_Arcane;
 	FGameplayTag Damage_Physical;
 
+	/* Debuffs */
+	FGameplayTag Debuff_Burn;
+	FGameplayTag Debuff_Arcane;
+	FGameplayTag Debuff_Physical;
+	FGameplayTag Debuff_Stun;
+
+	/* Debuff Properties */
+	FGameplayTag Debuff_Chance;
+	FGameplayTag Debuff_Damage;
+	FGameplayTag Debuff_Duration;
+	FGameplayTag Debuff_Frequency;
+
 
 	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToDebuffs;
 
 	/* Gameplay Effects */
 	FGameplayTag Effects_HitReact;

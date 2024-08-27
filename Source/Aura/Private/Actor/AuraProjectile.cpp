@@ -56,76 +56,61 @@ void AAuraProjectile::BeginPlay()
 void AAuraProjectile::Destroyed()
 {
 
-	if (!bHit && !HasAuthority()) 
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactSystem, GetActorLocation());
-		
-		if (LoopingSoundComponent) {
-		
-			LoopingSoundComponent->Stop();
-		
-		}
+	if (!bHit && !HasAuthority()) OnHit();
 
-		bHit = true;
-	}
-	
-	
 	Super::Destroyed();
 
+}
 
+void AAuraProjectile::OnHit()
+{
+	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactSystem, GetActorLocation());
+
+	if (LoopingSoundComponent) {
+		LoopingSoundComponent->Stop();
+	}
+
+	bHit = true;
 }
 
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	const bool bDamageEffectSpecHandleIsValid = DamageEffectSpecHandle.Data.IsValid();
+	//const bool bDamageEffectSpecHandleIsValid = DamageEffectSpecHandle.Data.IsValid();
 
-	if (!bDamageEffectSpecHandleIsValid) return;
+	AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
 
-	const bool bOverLappingInstigatorIsSelf = DamageEffectSpecHandle.Data.Get()->GetContext().GetInstigator() == OtherActor;
-	const bool bEffectCauserIsSelf = DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor;
+	//if (!bDamageEffectSpecHandleIsValid) return;
 
-	if (bEffectCauserIsSelf || bOverLappingInstigatorIsSelf)
-	{
-		return;
-	}
+	//const bool bOverLappingInstigatorIsSelf = DamageEffectSpecHandle.Data.Get()->GetContext().GetInstigator() == OtherActor;
+	const bool bDamageCauserIsSelf = SourceAvatarActor == OtherActor;
+	if (bDamageCauserIsSelf) return;
+
 	
 	// BE AWARE: This check for enemy friendly fire breaks PVP in the future for overlapping projectiles 
 
-	AActor* InstigatingActor = DamageEffectSpecHandle.Data.Get()->GetContext().GetInstigator();
+	//AActor* InstigatingActor = DamageEffectSpecHandle.Data.Get()->GetContext().GetInstigator();
 
-	if (!UAuraAbilitySystemLibrary::IsNotFriend(InstigatingActor, OtherActor))
-	{
-		return;
-	}
+	if (!UAuraAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, OtherActor)) return;
 
-	if (!bHit) {
-		
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactSystem, GetActorLocation());
-
-			if (LoopingSoundComponent) {
-				LoopingSoundComponent->Stop();
-			}
-			bHit = true;
-	}
+	if (!bHit) OnHit();
 
 	if (HasAuthority())
 	{
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
+			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
+			UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
 
-			TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+			//TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
 
 		}
 
 		Destroy();
 
 	} 
-	else 
-	{
-		bHit = true;
-	}
+	else bHit = true;
+
 
 
 }
