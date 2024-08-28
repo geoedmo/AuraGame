@@ -53,7 +53,7 @@ public:
 	virtual int32 GetMinionCount_Implementation() override;
 	virtual void IncremenetMinionCount_Implementation(int32 Amount) override;
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
-	virtual USkeletalMeshComponent* GetCharacterMesh_Implementation() override;
+	virtual ACharacter* GetACharacter_Implementation() override;
 
 	virtual FOnASCRegistered GetOnASCRegisteredDelegate() override;
 	virtual FOnDeath GetOnDeathDelegate() override;

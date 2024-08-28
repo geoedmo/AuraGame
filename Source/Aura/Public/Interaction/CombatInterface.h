@@ -84,7 +84,7 @@ public:
 	bool IsDead() const;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	USkeletalMeshComponent* GetCharacterMesh();
+	ACharacter* GetACharacter();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	AActor* GetAvatar();

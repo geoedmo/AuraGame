@@ -150,19 +150,14 @@ void UAuraAttributeSet::HandleDamage(FEffectProperties& Props)
 
 		if (bFatal)
 		{
-
+			// Add a Death Impulse (make the character go flying)
 			ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor);
 			if (CombatInterface)
 			{
-
 				FGameplayEffectContextHandle ContextHandle = Props.EffectContextHandle;
-
 				FVector DeathImpulse = UAuraAbilitySystemLibrary::GetDeathImpulse(ContextHandle);
-
-				DeathImpulse.Z = 0.f;
-
+				DeathImpulse.Z = 0.f; // Zero out the Z so that the character always launches somewhere not into the ground.
 				DeathImpulse = DeathImpulse;
-
 				CombatInterface->Die(DeathImpulse);
 			}
 
@@ -170,6 +165,19 @@ void UAuraAttributeSet::HandleDamage(FEffectProperties& Props)
 		}
 		else
 		{
+
+			FGameplayEffectContextHandle ContextHandle = Props.EffectContextHandle;
+			const bool bIsSuccessfulKnockback = UAuraAbilitySystemLibrary::IsSuccessfulKnockback(ContextHandle);
+
+			if (bIsSuccessfulKnockback)
+			{			
+				if (Props.TargetAvatarActor->Implements<UCombatInterface>())
+				{
+					ACharacter* Character = ICombatInterface::Execute_GetACharacter(Props.TargetAvatarActor);
+					Character->LaunchCharacter(UAuraAbilitySystemLibrary::GetKnockback(ContextHandle), false, false);
+				}
+			}
+
 			FGameplayTagContainer TagContainer;
 			TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
 			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);

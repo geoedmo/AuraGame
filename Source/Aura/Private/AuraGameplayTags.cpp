@@ -349,6 +349,11 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	* Debuff Properties
 	*/
 
+	GameplayTags.Debuff_KnockbackChance = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.KnockbackChance"),
+		FString("Chance to knockback.")
+	);
+
 	GameplayTags.Debuff_Chance = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Debuff.Chance"),
 		FString("Chance to apply debuff.")

@@ -114,7 +114,19 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	EvaluationParameters.TargetTags = TargetTags;
 	
 	FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
-	
+
+	/*
+	* Check for Knockback Success
+	*/
+	const float SourceKnockbackChance = Spec.GetSetByCallerMagnitude(GameplayTags.Debuff_KnockbackChance, false, -1.f);
+	const bool bKnockback = FMath::RandRange(1, 100) < SourceKnockbackChance;
+
+	if (bKnockback) {
+
+		UAuraAbilitySystemLibrary::SetIsSuccessfulKnockback(EffectContextHandle, bKnockback);
+
+	}
+
 	/* 
 	* Debuff Calculations
 	*/

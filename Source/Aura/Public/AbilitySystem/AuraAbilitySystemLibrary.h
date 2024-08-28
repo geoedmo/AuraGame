@@ -101,4 +101,16 @@ public:
 	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|Gameplay Effects")
 	static float GetDeathImpulseMagnitude(const FGameplayEffectContextHandle& EffectContextHandle);
 
+	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|Damage Effects")
+	static FVector GetKnockback (const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|Gameplay Effects")
+	static void SetIsSuccessfulKnockback(UPARAM(ref)FGameplayEffectContextHandle EffectContextHandle, bool bInIsKnockback);
+
+	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|Gameplay Effects")
+	static bool IsSuccessfulKnockback(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|Damage Effects")
+	static void SetKnockback(UPARAM(ref) FGameplayEffectContextHandle EffectContextHandle, const FVector& InKnockback);
+
 };

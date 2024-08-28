@@ -215,9 +215,9 @@ ECharacterClass AAuraCharacterBase::GetCharacterClass_Implementation()
 	return CharacterClass;
 }
 
-USkeletalMeshComponent* AAuraCharacterBase::GetCharacterMesh_Implementation()
+ACharacter* AAuraCharacterBase::GetACharacter_Implementation()
 {
-	return GetMesh();
+	return this;
 }
 
 FOnASCRegistered AAuraCharacterBase::GetOnASCRegisteredDelegate()

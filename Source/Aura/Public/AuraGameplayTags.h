@@ -109,6 +109,7 @@ public:
 	FGameplayTag Debuff_Stun;
 
 	/* Debuff Properties */
+	FGameplayTag Debuff_KnockbackChance;
 	FGameplayTag Debuff_Chance;
 	FGameplayTag Debuff_Damage;
 	FGameplayTag Debuff_Duration;

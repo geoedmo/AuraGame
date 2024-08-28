@@ -52,6 +52,15 @@ struct FDamageEffectParams {
 
 	UPROPERTY()
 	FVector DeathImpulse = FVector::ZeroVector;
+
+	UPROPERTY()
+	float KnockbackChance = 0.f;
+
+	UPROPERTY()
+	float KnockbackMagnitude = 0.f;
+
+	UPROPERTY()
+	FVector Knockback = FVector::ZeroVector;
 };
 
 
@@ -72,6 +81,8 @@ public:
 	TSharedPtr<FGameplayTag> GetDamageType() const { return DamageType; }
 	FVector GetDeathImpulse() const { return DeathImpulse; }
 	float GetDeathImpulseMagnitude() const { return DeathImpulseMagnitude; }
+	FVector GetKnockback() const { return Knockback; }
+	bool IsSuccessfulKnockback () const { return bIsSuccessfulKnockback; }
 
 	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit;}
 	void SetIsBlockedHit(bool bInIsBlockedHit) { bIsBlockedHit = bInIsBlockedHit; }
@@ -82,6 +93,8 @@ public:
 	void SetDamageType(TSharedPtr<FGameplayTag> InDamageType) { DamageType = InDamageType; }
 	void SetDeathImpulse(const FVector& InImpulse) { DeathImpulse = InImpulse; }
 	void SetDeathImpulseMagnitude(float InDeathImpulseMagnitude) { DeathImpulseMagnitude = InDeathImpulseMagnitude; }
+	void SetKnockback(const FVector& InKnockback) { Knockback = InKnockback; }
+	void SetIsSuccessfulKnockback(bool bInIsSuccessfulKnockback) { bIsSuccessfulKnockback = bInIsSuccessfulKnockback; }
 
 	virtual UScriptStruct* GetScriptStruct() const override
 	{
@@ -131,6 +144,12 @@ protected:
 
 	UPROPERTY()
 	float DeathImpulseMagnitude = 0.f;
+
+	UPROPERTY()
+	FVector Knockback = FVector::ZeroVector;
+
+	UPROPERTY()
+	bool bIsSuccessfulKnockback = false;
 };
 
 template<>
