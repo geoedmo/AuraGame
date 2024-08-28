@@ -150,10 +150,20 @@ void UAuraAttributeSet::HandleDamage(FEffectProperties& Props)
 
 		if (bFatal)
 		{
+
 			ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor);
 			if (CombatInterface)
 			{
-				CombatInterface->Die();
+
+				FGameplayEffectContextHandle ContextHandle = Props.EffectContextHandle;
+
+				FVector DeathImpulse = UAuraAbilitySystemLibrary::GetDeathImpulse(ContextHandle);
+
+				DeathImpulse.Z = 0.f;
+
+				DeathImpulse = DeathImpulse;
+
+				CombatInterface->Die(DeathImpulse);
 			}
 
 			SendXPEvent(Props);

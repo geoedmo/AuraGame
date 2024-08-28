@@ -47,10 +47,13 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 
 	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
 
+	//For Projectile Spells, we set the projectile damage type to the damage type, so that it can make use of DamageType specific debuffs.
+	Projectile->DamageEffectParams.DamageType = Projectile->ProjectileDamageType;
+
 	Projectile->FinishSpawning(SpawnTransform);
 
-
 }
+
 /*
 	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 	FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();

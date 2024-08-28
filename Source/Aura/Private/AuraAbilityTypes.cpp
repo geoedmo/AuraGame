@@ -61,9 +61,18 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 		{
 			RepBits |= 1 << 13;
 		}
+		if (!DeathImpulse.IsZero())
+		{
+			RepBits |= 1 << 14;
+		}
+		if (DeathImpulseMagnitude > 0)
+		{
+			RepBits |= 1 << 15;
+		}
+
 	}
 
-	Ar.SerializeBits(&RepBits, 14);
+	Ar.SerializeBits(&RepBits, 15);
 
 	if (RepBits & (1 << 0))
 	{
@@ -118,19 +127,19 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 	{
 		Ar << bIsSuccessfulDebuff;
 	}
-	if (RepBits & (1 << 11))
+	if (RepBits & (1 << 10))
 	{
 		Ar << DebuffDuration;
 	}
-	if (RepBits & (1 << 12))
+	if (RepBits & (1 << 11))
 	{
 		Ar << DebuffDamage;
 	}
-	if (RepBits & (1 << 13))
+	if (RepBits & (1 << 12))
 	{
 		Ar << DebuffFrequency;
 	}
-	if (RepBits & (1 << 14))
+	if (RepBits & (1 << 13))
 	{
 		if (Ar.IsLoading())
 		{
@@ -140,6 +149,15 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 			}
 		}
 		DamageType->NetSerialize(Ar, Map, bOutSuccess);
+	}
+	if (RepBits & (1 << 14))
+	{
+		DeathImpulse.NetSerialize(Ar, Map, bOutSuccess);
+
+	}
+	if (RepBits & (1 << 15))
+	{
+		Ar << DeathImpulseMagnitude;
 	}
 	if (Ar.IsLoading())
 	{

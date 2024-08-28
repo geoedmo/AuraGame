@@ -39,10 +39,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
 	TArray<FTaggedMontage> AttackMontages;
 
-	virtual void Die() override;
+	virtual void Die(const FVector& DeathImpulse) override;
 
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void MutlicastHandleDeath();
+	virtual void MutlicastHandleDeath(const FVector& DeathImpulse);
 
 	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
 	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
@@ -53,8 +53,11 @@ public:
 	virtual int32 GetMinionCount_Implementation() override;
 	virtual void IncremenetMinionCount_Implementation(int32 Amount) override;
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
+	virtual USkeletalMeshComponent* GetCharacterMesh_Implementation() override;
+
 	virtual FOnASCRegistered GetOnASCRegisteredDelegate() override;
 	virtual FOnDeath GetOnDeathDelegate() override;
+
 	/* </CombatInterface> */
 
 	FOnASCRegistered OnAscRegistered;

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "AuraAbilityTypes.h"
+#include "GameplayTagContainer.h"
 #include "AuraProjectile.generated.h"
 
 class USphereComponent;
@@ -28,6 +29,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn="true"));
 	FDamageEffectParams DamageEffectParams;
 
+	UPROPERTY(EditDefaultsOnly)
+	FGameplayTag ProjectileDamageType;
 
 protected:
 
