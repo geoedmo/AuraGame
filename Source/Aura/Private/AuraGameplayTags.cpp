@@ -330,17 +330,17 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FString("Burn Debuff that burns the enemy over time.")
 	);
 
-	GameplayTags.Debuff_Burn = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	GameplayTags.Debuff_Arcane = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Debuff.Arcane"),
 		FString("Arcane Debuff")
 	);
 	
-	GameplayTags.Debuff_Burn = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	GameplayTags.Debuff_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Debuff.Physical"),
 		FString("Physical debuff.")
 	);
 
-	GameplayTags.Debuff_Burn = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	GameplayTags.Debuff_Stun = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Debuff.Stun"),
 		FString("Stun Debuff")
 	);
@@ -354,17 +354,17 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FString("Chance to apply debuff.")
 	);
 
-	GameplayTags.Debuff_Burn = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	GameplayTags.Debuff_Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Debuff.Damage"),
 		FString("Amount of damage a debuff puts out.")
 	);
 
-	GameplayTags.Debuff_Burn = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	GameplayTags.Debuff_Duration = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Debuff.Duration"),
 		FString("Length of time a debuff is active for.")
 	);
 
-	GameplayTags.Debuff_Burn = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	GameplayTags.Debuff_Frequency = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Debuff.Frequency"),
 		FString("How often the debuff ticks.")
 	);

@@ -46,7 +46,7 @@ protected:
 	float DebuffFrequency = 1.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Debuff Properties")
-	float DebuffDuration = 5.f;
+	float DebuffDuration = 10.f;
 
 
 

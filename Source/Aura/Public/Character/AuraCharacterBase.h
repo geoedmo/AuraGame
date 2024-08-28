@@ -16,6 +16,7 @@ class UGameplayAbility;
 class UAnimMontage;
 class UMaterialInstance;
 class UNiagaraSystem;
+class UDebuffNiagaraComponent;
 
 UCLASS(Abstract)
 class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
@@ -42,6 +43,7 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MutlicastHandleDeath();
+
 	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
 	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
 	virtual bool IsDead_Implementation() const override;
@@ -51,9 +53,12 @@ public:
 	virtual int32 GetMinionCount_Implementation() override;
 	virtual void IncremenetMinionCount_Implementation(int32 Amount) override;
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
-
+	virtual FOnASCRegistered GetOnASCRegisteredDelegate() override;
+	virtual FOnDeath GetOnDeathDelegate() override;
 	/* </CombatInterface> */
 
+	FOnASCRegistered OnAscRegistered;
+	FOnDeath OnDeath;
 
 protected:
 	virtual void BeginPlay() override;
@@ -101,12 +106,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
 
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UDebuffNiagaraComponent> BurnDebuffComponent;
+
 	virtual void InitializeDefaultAttributes() const;
-
-	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
-
-	void AddCharacterAbilities();
-	/* Dissolve Effects */
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	TObjectPtr<UMaterialInstance> DissolveMaterialInstance;
@@ -114,6 +117,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
 
+	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
+
+	void AddCharacterAbilities();
+
+	/* Dissolve Effects */
 	void Dissolve();
 	void RemoveEnemyHealthBar();
 
@@ -122,7 +130,6 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
-
 
 	/* Minions */
 

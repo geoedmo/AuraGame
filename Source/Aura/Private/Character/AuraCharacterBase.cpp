@@ -5,6 +5,7 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"	
 #include "AuraGameplayTags.h"
+#include "AbilitySystem/Components/DebuffNiagaraComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Interaction/EnemyInteraction.h"
@@ -13,7 +14,12 @@
 
 AAuraCharacterBase::AAuraCharacterBase()
 {
- 	
+	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
+
+	BurnDebuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>("BurnDebuffComponent");
+	BurnDebuffComponent->SetupAttachment(GetRootComponent());
+	BurnDebuffComponent->DebuffTag = GameplayTags.Debuff_Burn;
+
 	PrimaryActorTick.bCanEverTick = false;
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));
@@ -25,7 +31,6 @@ AAuraCharacterBase::AAuraCharacterBase()
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap);
 	GetMesh()->SetGenerateOverlapEvents(true);
-
 
 }
 
@@ -68,9 +73,16 @@ void AAuraCharacterBase::MutlicastHandleDeath_Implementation()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Dissolve();
 
+	
+
 	// Enemy Health Bar falls through the floor, this is the solution:
 	RemoveEnemyHealthBar();
+
 	bDead = true;
+
+	BurnDebuffComponent->Deactivate();
+
+	//OnDeath.Broadcast(this);
 }
 
 void AAuraCharacterBase::RemoveEnemyHealthBar()
@@ -201,6 +213,16 @@ void AAuraCharacterBase::IncremenetMinionCount_Implementation(int32 Amount)
 ECharacterClass AAuraCharacterBase::GetCharacterClass_Implementation()
 {
 	return CharacterClass;
+}
+
+FOnASCRegistered AAuraCharacterBase::GetOnASCRegisteredDelegate()
+{
+	return OnAscRegistered;
+}
+
+FOnDeath AAuraCharacterBase::GetOnDeathDelegate()
+{
+	return OnDeath;
 }
 
 void AAuraCharacterBase::InitializeDefaultAttributes() const

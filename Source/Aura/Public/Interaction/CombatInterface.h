@@ -9,6 +9,12 @@
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "CombatInterface.generated.h"
 
+class UAbilitySystemComponent;
+class UNiagaraSystem;
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnASCRegistered, UAbilitySystemComponent*);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnDeath, AActor*);
+
+
 USTRUCT(BlueprintType)
 struct FTaggedMontage
 {
@@ -93,4 +99,8 @@ public:
 	void FinishSummoning();
 
 	virtual void Die() = 0;
+
+	virtual FOnASCRegistered GetOnASCRegisteredDelegate() = 0;
+
+	virtual FOnDeath GetOnDeathDelegate() = 0;
 };

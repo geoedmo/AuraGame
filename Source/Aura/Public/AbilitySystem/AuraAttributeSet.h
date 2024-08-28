@@ -269,6 +269,11 @@ private:
 	bool bTopOffMana = false;
 
 	/** Damage Numbers Widget**/
+
+	void HandleDamage(FEffectProperties& Props);
+	void HandleXP(FEffectProperties& Props);
+
+	void HandleDebuffs(FEffectProperties& Props);
 	
 	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool bCriticalHit) const;
 
