@@ -378,4 +378,64 @@ void UAuraAbilitySystemLibrary::SetKnockback(UPARAM(ref)FGameplayEffectContextHa
 	}
 }
 
+TArray<FRotator> UAuraAbilitySystemLibrary::EvenlySpacedRotators(const FVector& Foward, const FVector& Axis, float Spread, int32 NumRotators)
+{
+
+	TArray<FRotator> Rotators;
+
+	const FVector LeftOfSpread = Foward.RotateAngleAxis(-Spread / 2, Axis);
+	const FVector RightOfSpread = Foward.RotateAngleAxis(Spread / 2, Axis);
+
+	//NumProjectiles = FMath::Min(MaxNumProjectiles, GetAbilityLevel());
+
+	if (NumRotators > 1) {
+
+		const float DeltaSpread = Spread / (NumRotators - 1);
+
+		for (int32 i = 0; i < NumRotators; i++) {
+
+			const FVector Direction = LeftOfSpread.RotateAngleAxis(DeltaSpread * i, Axis);
+
+			Rotators.Add(Direction.Rotation());
+		}
+
+	}
+	else
+	{
+		Rotators.Add(Foward.Rotation());
+	}
+
+
+	return Rotators;
+}
+
+TArray<FVector> UAuraAbilitySystemLibrary::EvenlySpacedVectors(const FVector& Foward, const FVector& Axis, float Spread, int32 NumVectors)
+{
+	TArray<FVector> Vectors;
+
+	const FVector LeftOfSpread = Foward.RotateAngleAxis(-Spread / 2, Axis);
+	const FVector RightOfSpread = Foward.RotateAngleAxis(Spread / 2, Axis);
+
+	//NumProjectiles = FMath::Min(MaxNumProjectiles, GetAbilityLevel());
+
+	if (NumVectors > 1) {
+
+		const float DeltaSpread = Spread / (NumVectors - 1);
+
+		for (int32 i = 0; i < NumVectors; i++) {
+
+			const FVector Direction = LeftOfSpread.RotateAngleAxis(DeltaSpread * i, Axis);
+
+			Vectors.Add(Direction);
+		}
+
+	}
+	else
+	{
+		Vectors.Add(Foward);
+	}
+
+	return Vectors;
+}
+
 

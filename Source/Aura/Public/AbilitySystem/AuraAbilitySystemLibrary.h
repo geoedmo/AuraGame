@@ -113,4 +113,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|Damage Effects")
 	static void SetKnockback(UPARAM(ref) FGameplayEffectContextHandle EffectContextHandle, const FVector& InKnockback);
 
+	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|GameplayMechanics")
+	static TArray<FRotator> EvenlySpacedRotators(const FVector& FowardVector, const FVector& Axis, float Spread, int32 NumRotators);
+
+	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|GameplayMechanics")
+	static TArray<FVector> EvenlySpacedVectors(const FVector& FowardVector, const FVector& Axis, float Spread, int32 NumVectors);
+
 };

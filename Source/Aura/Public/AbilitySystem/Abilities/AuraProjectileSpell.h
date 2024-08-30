@@ -21,10 +21,14 @@ class AURA_API UAuraProjectileSpell : public UAuraDamageAbility
 	GENERATED_BODY()
 public:
 
+
+
 protected:
 
 	//	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	//TSubclassOf<AAuraProjectile> ProjectileClass;
+
+
 
 	UPROPERTY(EditDefaultsOnly)
 	int32 NumProjectiles = 5;
