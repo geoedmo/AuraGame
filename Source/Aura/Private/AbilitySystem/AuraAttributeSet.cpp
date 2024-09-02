@@ -308,19 +308,20 @@ void UAuraAttributeSet::HandleDebuffs(FEffectProperties& Props)
 void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool bCriticalHit) const
 {
 	// Only show damage numbers if the damage is not self damage
-	if (Props.SourceCharacter != Props.TargetCharacter) {
+	if (Props.SourceCharacter != Props.TargetCharacter && Props.SourceCharacter->Controller && Props.TargetCharacter->Controller) {
 
 		// Get Player Controller
-		if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.SourceCharacter->Controller)) {
 
-			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
-			return;
-		}
+			if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.SourceCharacter->Controller)) {
 
-		if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.TargetCharacter->Controller)) {
+				PC->ShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
+				return;
+			}
 
-			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
-		}
+			if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.TargetCharacter->Controller)) {
+
+				PC->ShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
+			}
 
 	}
 }

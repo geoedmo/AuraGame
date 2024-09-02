@@ -72,7 +72,13 @@ void AAuraCharacterBase::MutlicastHandleDeath_Implementation(const FVector& Deat
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	GetMesh()->AddImpulse(DeathImpulse, NAME_None, true);
 
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	// So the projectiles don't go to a location they home to and not explode when the character mesh is no longer there.
+	// Below Settings makes the capsule fall through the floor which has a somewhat desireable effect... since the projectiles are homing to the capsule,
+	// they fall into the floor and explode.
+	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Projectile, ECollisionResponse::ECR_Block);
 	Dissolve();
 
 	// Enemy Health Bar falls through the floor, this is the solution:

@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/AudioComponent.h"
 #include "Aura/Aura.h"
+#include "Interaction/CombatInterface.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
@@ -69,6 +70,7 @@ void AAuraProjectile::OnHit()
 
 	if (LoopingSoundComponent) {
 		LoopingSoundComponent->Stop();
+		LoopingSoundComponent->DestroyComponent();
 	}
 
 	bHit = true;
@@ -77,6 +79,16 @@ void AAuraProjectile::OnHit()
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	//const bool bDamageEffectSpecHandleIsValid = DamageEffectSpecHandle.Data.IsValid();
+
+	if (OtherActor->Implements<UCombatInterface>()) {
+
+		const bool bOtherActorDead = ICombatInterface::Execute_IsDead(OtherActor);
+
+		if (bOtherActorDead) {
+			Destroy();
+		}
+
+	}
 
 	AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
 

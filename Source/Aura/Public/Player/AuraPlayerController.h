@@ -17,6 +17,8 @@ class UAuraAbilitySystemComponent;
 class USplineComponent;
 class AAuraPlayerState;
 class UDamageTextComponent;
+class UNiagaraSystem;
+class UNiagaraComponent;
 
 
 UCLASS()
@@ -28,7 +30,6 @@ public:
 	AAuraPlayerController();
 
 
-
 	virtual void PlayerTick(float DeltaTime) override;
 
 	UFUNCTION(Client, Reliable)
@@ -36,7 +37,11 @@ public:
 
 
 protected:
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UNiagaraSystem> ClickNiagara;
 
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UNiagaraComponent> ClickNiagaraComp;
 
 
 	virtual void BeginPlay() override;

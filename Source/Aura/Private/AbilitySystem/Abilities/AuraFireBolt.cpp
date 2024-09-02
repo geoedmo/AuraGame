@@ -132,18 +132,13 @@ void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, co
 		SocketTag);
 
 	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+	
 	if (bOverridePitch) Rotation.Pitch = PitchOverride;
-
-
 	//const FVector LeftOfSpread = Forward.RotateAngleAxis(-ProjectileSpread / 2, FVector::UpVector);
 	//const FVector RightOfSpread = Forward.RotateAngleAxis(ProjectileSpread / 2, FVector::UpVector);
 
 	const FVector Forward = Rotation.Vector();
-
-
 	int32 EffectiveNumProjectiles = FMath::Min(MaxNumProjectiles, GetAbilityLevel());
-
-
 	TArray<FRotator> Rotations = UAuraAbilitySystemLibrary::EvenlySpacedRotators(Forward, FVector::UpVector, ProjectileSpread, EffectiveNumProjectiles);
 
 
@@ -167,15 +162,15 @@ void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, co
 
 		// Current Known Issue with Fireballs Homing.. If the target dies before the fireball reaches it, it does not explode.
 		if (HomingTarget && HomingTarget->Implements<UCombatInterface>()) {
-
 			Projectile->ProjectileMovement->HomingTargetComponent = HomingTarget->GetRootComponent();
-		
 		}
 
 		else
+
 		{
 			Projectile->HomingTargetSceneComponent = NewObject<USceneComponent>(USceneComponent::StaticClass());
 			Projectile->HomingTargetSceneComponent->SetWorldLocation(ProjectileTargetLocation);
+		
 			Projectile->ProjectileMovement->HomingTargetComponent = Projectile->HomingTargetSceneComponent;
 
 		}
@@ -193,9 +188,6 @@ void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, co
 
 	} 
 
-
-
-
 	/*
 	if (NumProjectiles > 1) {
 
@@ -208,9 +200,7 @@ void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, co
 			UKismetSystemLibrary::DrawDebugArrow(GetAvatarActorFromActorInfo(), Start, Start + Direction * 75.f, 4.f, FColor::Orange, 120.f, 2.f);
 			
 			// Spawn a projectile on each iteration of the for loop, (probably will need to be a function since it will be repeated below in the else statement.
-			
 
-		
 		}
 
 	}

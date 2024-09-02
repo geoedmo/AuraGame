@@ -101,6 +101,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void FinishSummoning();
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetIsShocking(bool InShockingBool);
+
 	virtual void Die(const FVector& DeathImpulse) = 0;
 
 	virtual FOnASCRegistered GetOnASCRegisteredDelegate() = 0;

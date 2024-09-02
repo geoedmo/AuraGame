@@ -16,6 +16,8 @@
 #include "Player/AuraPlayerState.h"
 #include "UI/Widget/DamageTextComponent.h"
 #include "NavigationPath.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 
 AAuraPlayerController::AAuraPlayerController() {
@@ -23,6 +25,7 @@ AAuraPlayerController::AAuraPlayerController() {
 
 
 	Spline = CreateDefaultSubobject<USplineComponent>("Spline");
+
 }
 
 void AAuraPlayerController::PlayerTick(float DeltaTime)
@@ -205,7 +208,9 @@ void AAuraPlayerController::CursorTrace()
 */
 
 void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
-{
+{	
+
+
 
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
@@ -213,6 +218,7 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 	bAutoRunning = false;
 	}
 
+	if (GetASC()) GetASC()->AbilityInputTagPressed(InputTag);
 
 }
 
@@ -236,6 +242,8 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 	{
 		bool bIsCurrentlyInMenus = AuraPlayerState->GetMenuStatus();
 		if (bIsCurrentlyInMenus) return;
+
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ClickNiagara, CursorHit.ImpactPoint);
 
 		const APawn* ControlledPawn = GetPawn();
 		if (FollowTime <= ShortPressThreshold && ControlledPawn) {
@@ -265,11 +273,9 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
 
-	// play niagara system here?
-
-
 	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
+		
 		if (GetASC())
 		{
 			GetASC()->AbilityInputTagHeld(InputTag);
