@@ -11,6 +11,8 @@
 #include "Player/AuraPlayerState.h"
 #include "Player/AuraPlayerController.h"
 #include "NiagaraComponent.h"
+#include "UI/Widget/AuraUserWidget.h"
+#include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/WidgetController/AuraWidgetController.h"
 
@@ -29,6 +31,8 @@ AAuraCharacter::AAuraCharacter()
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false;
 
+	AuraCastBar = CreateDefaultSubobject<UWidgetComponent>("AuraCastBar");
+	AuraCastBar->SetupAttachment(GetRootComponent());
 
 	LevelUpNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>("Level Up Niagara Component");
 	LevelUpNiagaraComponent->SetupAttachment(GetRootComponent());
@@ -170,6 +174,11 @@ int32 AAuraCharacter::GetSpellPoints_Implementation()
 void AAuraCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (UAuraUserWidget* AuraUserWidget = Cast<UAuraUserWidget>(AuraCastBar->GetUserWidgetObject()))
+	{
+		AuraUserWidget->SetWidgetController(this);
+	}
 
 }
 

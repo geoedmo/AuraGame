@@ -22,6 +22,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StoreOwnerVariables();
 
+	UFUNCTION(BlueprintCallable)
+	void PerformFirstTraceFromWeapon();
+
 protected:
 
 

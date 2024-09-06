@@ -102,6 +102,17 @@ public:
 	FGameplayTag Damage_Arcane;
 	FGameplayTag Damage_Physical;
 
+
+
+	/*Player Tags*/
+	FGameplayTag Player_Block_CursorTrace;
+	FGameplayTag Player_Block_InputPressed;
+	FGameplayTag Player_Block_InputReleased;
+	FGameplayTag Player_Block_InputHeld;
+	/* Cast Tags*/
+	FGameplayTag Player_Casting;
+
+
 	/* Debuffs */
 	FGameplayTag Debuff_Burn;
 	FGameplayTag Debuff_Arcane;

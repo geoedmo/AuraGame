@@ -12,6 +12,7 @@
 #include "Components/WidgetComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
+
 #include "AuraGameplayTags.h"
 
 AAuraEnemy::AAuraEnemy()
@@ -115,6 +116,12 @@ void AAuraEnemy::BeginPlay()
 			&AAuraEnemy::HitReactTagChanged
 		);
 
+		// Cast Tag Recieved Callback
+		AbilitySystemComponent->RegisterGameplayTagEvent(FAuraGameplayTags::Get().Player_Casting,EGameplayTagEventType::NewOrRemoved).AddUObject(
+			this,
+			&AAuraEnemy::ReceiveCastDurationFromGameEffect 
+		);
+
 
 		OnHealthChanged.Broadcast(AuraAS->GetHealth());
 		OnMaxHealthChanged.Broadcast(AuraAS->GetMaxHealth());
@@ -132,6 +139,17 @@ void AAuraEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCou
 	{
 		AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), bHitReacting);
 	}
+}
+
+void AAuraEnemy::ReceiveCastDurationFromGameEffect(const FGameplayTag CastTag, int32 NewCount)
+{
+	if (NewCount > 0) 
+	{
+		UAuraAbilitySystemComponent* AuraASC = Cast <UAuraAbilitySystemComponent>(AbilitySystemComponent);
+		if (HasAuthority()) CastTime = AuraASC->GetGameplayEffectDurationBasedOnIfTagHeld(CastTag);
+		CastTimeDelegate.Broadcast(CastTime);
+	}
+
 }
 
 void AAuraEnemy::InitAbilityActorInfo()
@@ -157,6 +175,12 @@ void AAuraEnemy::InitializeDefaultAttributes() const
 	UAuraAbilitySystemLibrary::InitializeClassDefaultAttributes(this, CharacterClass, Level, AbilitySystemComponent);
 }
 
+
+void AAuraEnemy::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME_CONDITION_NOTIFY(AAuraEnemy, CastTime, COND_None, REPNOTIFY_Always);
+}
 
 void AAuraEnemy::HighlightActor()
 {

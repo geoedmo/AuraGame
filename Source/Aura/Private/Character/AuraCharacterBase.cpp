@@ -9,6 +9,7 @@
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Interaction/EnemyInteraction.h"
+#include "Interaction/AuraPlayerInterface.h"
 #include "Aura/Aura.h"
 
 
@@ -68,8 +69,9 @@ void AAuraCharacterBase::MutlicastHandleDeath_Implementation(const FVector& Deat
 
 	GetMesh()->SetSimulatePhysics(true);
 	GetMesh()->SetEnableGravity(true);
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	GetMesh()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
 	GetMesh()->AddImpulse(DeathImpulse, NAME_None, true);
 
 	//GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -77,7 +79,11 @@ void AAuraCharacterBase::MutlicastHandleDeath_Implementation(const FVector& Deat
 	// So the projectiles don't go to a location they home to and not explode when the character mesh is no longer there.
 	// Below Settings makes the capsule fall through the floor which has a somewhat desireable effect... since the projectiles are homing to the capsule,
 	// they fall into the floor and explode.
-	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+
+	if (!this->Implements<UAuraPlayerInterface>())
+	{ 	
+		GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	}
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Projectile, ECollisionResponse::ECR_Block);
 	Dissolve();
 
@@ -224,6 +230,11 @@ ECharacterClass AAuraCharacterBase::GetCharacterClass_Implementation()
 ACharacter* AAuraCharacterBase::GetACharacter_Implementation()
 {
 	return this;
+}
+
+USkeletalMeshComponent* AAuraCharacterBase::GetWeapon_Implementation()
+{
+	return Weapon;
 }
 
 FOnASCRegistered AAuraCharacterBase::GetOnASCRegisteredDelegate()

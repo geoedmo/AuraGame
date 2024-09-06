@@ -101,8 +101,14 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void FinishSummoning();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	USkeletalMeshComponent* GetWeapon();
+
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetIsShocking(bool InShockingBool);
+
+
+
 
 	virtual void Die(const FVector& DeathImpulse) = 0;
 

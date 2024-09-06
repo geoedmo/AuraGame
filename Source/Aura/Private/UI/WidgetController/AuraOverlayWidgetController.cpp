@@ -7,6 +7,7 @@
 #include "AbilitySystem/Data/LevelUpInfo.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
+#include "AbilitySystem/AsyncTasks/WaitCastTimeChange.h"
 #include "AuraGameplayTags.h"
 
 void UAuraOverlayWidgetController::BroadcastInitialValues()
@@ -21,7 +22,6 @@ void UAuraOverlayWidgetController::BroadcastInitialValues()
 
 void UAuraOverlayWidgetController::BindCallbacksToDependencies()
 {
-
 	GetAuraASC()->AbilityEquippedDelegate.AddUObject(this, &UAuraOverlayWidgetController::OnAbilityEquipped);
 
 	// Added a couple Local variables for doing some work below.
@@ -120,8 +120,7 @@ void UAuraOverlayWidgetController::BindCallbacksToDependencies()
 
 		);
 
-		// Still have the ASC Check here, so Going to bind to XP delegate:
-
+		// Still have the ASC Check here, so Going to bind to XP delegate
 
 	}
 
@@ -148,6 +147,11 @@ void UAuraOverlayWidgetController::ReceiveXPInformation(int32 NewXP)
 		OnXPPercentChangedDelegate.Broadcast(XPBarPercentForThisLevel);
 	}
 
+
+}
+
+void UAuraOverlayWidgetController::CastTagChanged(const FGameplayTag InCastTag, int32 NewCount)
+{
 
 }
 

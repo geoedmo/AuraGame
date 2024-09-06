@@ -73,6 +73,8 @@ public:
 	// Call back for receiving XP Information
 	void ReceiveXPInformation(int32 NewXP);
 
+	void CastTagChanged(const FGameplayTag InCastTag, int32 NewCount);
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;

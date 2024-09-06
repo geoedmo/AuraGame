@@ -35,6 +35,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	USceneComponent* HomingTargetSceneComponent;
 
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<AActor> SourceAvatarActor;
+
 protected:
 
 

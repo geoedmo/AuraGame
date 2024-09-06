@@ -218,6 +218,31 @@ void UAuraAbilitySystemComponent::ClientEquipAbility_Implementation(const FGamep
 
 }
 
+float UAuraAbilitySystemComponent::GetGameplayEffectDurationBasedOnIfTagHeld(const FGameplayTag& TagToSearch)
+{
+
+		FGameplayEffectQuery GameplayEffectQuery = FGameplayEffectQuery::MakeQuery_MatchAnyOwningTags(TagToSearch.GetSingleTagContainer());
+		TArray<float> TimesRemaining = GetActiveEffectsTimeRemaining(GameplayEffectQuery);
+
+		if (TimesRemaining.Num() > 0) {
+			int32 Index = 0;
+			float HighestTime = TimesRemaining[0];
+			for (int32 i = 0; i < TimesRemaining.Num(); i++) {
+				if (TimesRemaining[i] > HighestTime)
+				{
+					HighestTime = TimesRemaining[i];
+					Index = i;// Dont really need this, but im keeping it.
+				}
+
+			}
+			float TimeRemaining = HighestTime;
+
+			return TimeRemaining;
+		}
+
+	return 0.0f;
+}
+
 void UAuraAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputTag)
 {
 		if (!InputTag.IsValid()) return;

@@ -15,6 +15,7 @@ class AAuraPlayerState;
 class USpringArmComponent;
 class UNiagaraComponent;
 class USoundBase;
+class UWidgetComponent;
 
 UCLASS()
 class AURA_API AAuraCharacter : public AAuraCharacterBase, public IAuraPlayerInterface
@@ -60,6 +61,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "LevelUp")
 	TObjectPtr<USoundBase> LevelUpSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
+	TObjectPtr<UWidgetComponent> AuraCastBar;
+
 
 private:
 

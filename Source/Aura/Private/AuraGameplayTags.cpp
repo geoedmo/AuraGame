@@ -297,6 +297,37 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FString("Physical Damage Type")
 	);
 
+	/*
+	* Cast Tags
+	*/
+	GameplayTags.Player_Casting = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Player_Casting"),
+		FString("Cast time for Firebolt")
+	);
+
+	/*
+	* Player Tags
+	*/
+	GameplayTags.Player_Block_CursorTrace = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Player.Block.CursorTrace"),
+		FString("Block the Cursor Trace while this tag is owned.")
+	);
+
+	GameplayTags.Player_Block_InputPressed = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Player.Block.InputPressed"),
+		FString("Block input key presses while this tag is owned.")
+	);
+
+	GameplayTags.Player_Block_InputReleased = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Player.Block.InputReleased"),
+		FString("Block input key released while this tag is owned.")
+	);
+
+	GameplayTags.Player_Block_InputHeld = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Player.Block.InputHeld"),
+		FString("Block input keys being held while this tag is owned.")
+	);
+
 
 	/*
 	* Resitances

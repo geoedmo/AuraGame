@@ -6,12 +6,13 @@
 #include "Interaction/EnemyInteraction.h"
 #include "Character/AuraCharacterBase.h"
 #include "UI/WidgetController/AuraOverlayWidgetController.h"
-
+#include "Net/UnrealNetwork.h"
 #include "AuraEnemy.generated.h"
 
 /**
  * 
  */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnReceieveCastTimeSignature, float, CastTime);
 
 class UAuraAttributeSet;
 class UWidgetComponent;
@@ -32,6 +33,10 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+
+	UPROPERTY(BlueprintAssignable)
+	FOnReceieveCastTimeSignature CastTimeDelegate;
+
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnHealthChanged;
 
@@ -50,7 +55,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Combat")
 	TObjectPtr<AActor> CombatTarget;
 
+	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Casting")
+	float CastTime;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	/* <EnemyInteraction> */
 
 	// ** Overrides ** //
@@ -68,6 +76,8 @@ public:
 	/** </Combat Interface> **/
 
 	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+	
+	void ReceiveCastDurationFromGameEffect(const FGameplayTag CastTag, int32 NewCount);
 
 protected:
 

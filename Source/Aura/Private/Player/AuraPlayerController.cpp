@@ -58,7 +58,6 @@ void AAuraPlayerController::AutoRun()
 
 		// Find Location Closest to Character on Spline
 		const FVector LocationOnSpline = Spline->FindLocationClosestToWorldLocation(ControlledPawn->GetActorLocation(), ESplineCoordinateSpace::World);
-
 		const FVector Direction = Spline->FindDirectionClosestToWorldLocation(LocationOnSpline, ESplineCoordinateSpace::World);
 
 		ControlledPawn->AddMovementInput(Direction);
@@ -136,6 +135,15 @@ void AAuraPlayerController::Move(const FInputActionValue& ActionValue)
 void AAuraPlayerController::CursorTrace()
 {
 
+	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_CursorTrace))
+	{
+		if (LastActor) LastActor->UnhighlightActor();
+
+		LastActor = nullptr;
+		ThisActor = nullptr;
+		return;
+	}
+
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 
 	if (!CursorHit.bBlockingHit) return;
@@ -209,8 +217,7 @@ void AAuraPlayerController::CursorTrace()
 
 void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {	
-
-
+	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed)) return;
 
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
@@ -224,6 +231,9 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 
 void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
+
+	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputReleased)) return;
+
 	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
 		if (GetASC())
@@ -243,10 +253,15 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 		bool bIsCurrentlyInMenus = AuraPlayerState->GetMenuStatus();
 		if (bIsCurrentlyInMenus) return;
 
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ClickNiagara, CursorHit.ImpactPoint);
-
 		const APawn* ControlledPawn = GetPawn();
 		if (FollowTime <= ShortPressThreshold && ControlledPawn) {
+
+			//Niagara System
+			if (!GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_CursorTrace))
+			{ 
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ClickNiagara, CursorHit.ImpactPoint);
+			}
+
 
 			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
 			{
@@ -263,7 +278,8 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 				}
 			}
 	
-		} 
+		}
+
 		FollowTime = 0.f;
 		bTargeting = false;
 		
@@ -272,6 +288,8 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 }
 void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
+
+	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputHeld)) return;
 
 	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{

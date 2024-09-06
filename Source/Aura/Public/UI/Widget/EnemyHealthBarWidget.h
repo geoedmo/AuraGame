@@ -9,9 +9,13 @@
 /**
  * 
  */
+class UAbilitySystemComponent;
+
 UCLASS()
 class AURA_API UEnemyHealthBarWidget : public UAuraUserWidget
 {
 	GENERATED_BODY()
-	
+
+public:
+
 };
