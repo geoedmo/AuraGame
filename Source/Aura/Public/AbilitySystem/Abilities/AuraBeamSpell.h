@@ -25,6 +25,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PerformFirstTraceFromWeapon();
 
+	UFUNCTION(BlueprintCallable)
+	void StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTargets);
+
 protected:
 
 
@@ -39,6 +42,9 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Beam")
 	TObjectPtr<APlayerController> StoredOwnerController;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Beam")
+	int32 MaxShockEnemies = 5;
 
 private:
 	

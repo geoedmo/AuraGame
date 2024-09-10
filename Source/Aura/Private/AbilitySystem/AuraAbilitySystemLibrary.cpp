@@ -202,6 +202,7 @@ void UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldC
 					}
 				}
 			}
+
 }
 
 bool UAuraAbilitySystemLibrary::IsNotFriend(AActor* FirstActor, AActor* SecondActor)
@@ -407,6 +408,54 @@ TArray<FRotator> UAuraAbilitySystemLibrary::EvenlySpacedRotators(const FVector& 
 
 
 	return Rotators;
+}
+
+void UAuraAbilitySystemLibrary::GetClosestTargets(int32 MaxTargets, const TArray<AActor*>& InActors, TArray<AActor*>& OutClosestTargets, const FVector& Origin)
+{
+	TMap<AActor*, float> ActorsToDistance;
+
+	if (InActors.Num() > MaxTargets) 
+	{
+		//Populate the TMap of Actors to their Distances
+		for (int32 i = 0; i < InActors.Num(); i++) 
+		{
+			FVector DistanceToOrigin = InActors[i]->GetActorLocation() - Origin;
+			float ActorDistanceToOrigin = DistanceToOrigin.Length();
+			ActorsToDistance.Add(InActors[i], ActorDistanceToOrigin);
+		}
+
+		//Remove Top Farthest Actors until MaxTargets is Reached which gives us the closest ones left.
+		while (ActorsToDistance.Num() > MaxTargets)
+		{
+			float HighestValueDistance = 0.f;
+			AActor* FarthestActor = nullptr;
+
+			// Run through the T-Map searching for Highest Value of Distance to Origin
+			for (auto CheckActor : ActorsToDistance) 
+			{
+				if (CheckActor.Value > HighestValueDistance) 
+				{
+					// We know that HighestValue can't actually be highest Value... So this found Value becomes Highest Value
+					HighestValueDistance = CheckActor.Value;
+					FarthestActor = CheckActor.Key;
+				}
+			}
+
+		ActorsToDistance.Remove(FarthestActor); // We know we WOULDN'T want this one... It's the farthest away, (HighestValueDistance), it gets removed.
+		}
+
+		// Add All Actors left in T-Map to the out array.
+		for (auto ActorToAdd : ActorsToDistance) 
+		{
+			OutClosestTargets.AddUnique(ActorToAdd.Key);
+		}
+
+	} 
+	else
+	{
+		// Since the amount of Targets was less than the Max, the OutClosestTargets array becomes the InActors array.
+		OutClosestTargets = InActors;
+	}
 }
 
 TArray<FVector> UAuraAbilitySystemLibrary::EvenlySpacedVectors(const FVector& Foward, const FVector& Axis, float Spread, int32 NumVectors)
