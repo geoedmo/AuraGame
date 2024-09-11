@@ -419,35 +419,24 @@ void UAuraAbilitySystemLibrary::GetClosestTargets(int32 MaxTargets, const TArray
 		//Populate the TMap of Actors to their Distances
 		for (int32 i = 0; i < InActors.Num(); i++) 
 		{
-			FVector DistanceToOrigin = InActors[i]->GetActorLocation() - Origin;
-			float ActorDistanceToOrigin = DistanceToOrigin.Length();
+			float ActorDistanceToOrigin = (InActors[i]->GetActorLocation() - Origin).Length();
 			ActorsToDistance.Add(InActors[i], ActorDistanceToOrigin);
 		}
 
-		//Remove Top Farthest Actors until MaxTargets is Reached which gives us the closest ones left.
-		while (ActorsToDistance.Num() > MaxTargets)
+		TArray<float> ActorDistances;
+		ActorsToDistance.GenerateValueArray(ActorDistances);
+		ActorDistances.Sort(); 
+
+		// Closest Distance will be first. Can flip this to do the farthest first, 
+		// but probably overall more performant with tons of enemies on the screen
+		// to do it from the bottom up as the max times run of the while loop will be MaxTargets
+
+		int32 DistanceIndex = 0;
+		while (DistanceIndex < MaxTargets)
 		{
-			float HighestValueDistance = 0.f;
-			AActor* FarthestActor = nullptr;
-
-			// Run through the T-Map searching for Highest Value of Distance to Origin
-			for (auto CheckActor : ActorsToDistance) 
-			{
-				if (CheckActor.Value > HighestValueDistance) 
-				{
-					// We know that HighestValue can't actually be highest Value... So this found Value becomes Highest Value
-					HighestValueDistance = CheckActor.Value;
-					FarthestActor = CheckActor.Key;
-				}
-			}
-
-		ActorsToDistance.Remove(FarthestActor); // We know we WOULDN'T want this one... It's the farthest away, (HighestValueDistance), it gets removed.
-		}
-
-		// Add All Actors left in T-Map to the out array.
-		for (auto ActorToAdd : ActorsToDistance) 
-		{
-			OutClosestTargets.AddUnique(ActorToAdd.Key);
+			//Search first value in array, which is closest distance over the T-Map and add that to the OutClosestTargets array
+			OutClosestTargets.Add(*ActorsToDistance.FindKey(ActorDistances[DistanceIndex]));
+			DistanceIndex++;
 		}
 
 	} 
@@ -456,6 +445,32 @@ void UAuraAbilitySystemLibrary::GetClosestTargets(int32 MaxTargets, const TArray
 		// Since the amount of Targets was less than the Max, the OutClosestTargets array becomes the InActors array.
 		OutClosestTargets = InActors;
 	}
+
+	/* DEPRECATED SlOWER WAY BUT STILL LIKED IT
+	//Remove Top Farthest Actors until MaxTargets is Reached which gives us the closest ones left.
+	while (ActorsToDistance.Num() > MaxTargets)
+	{
+		float HighestValueDistance = 0.f;
+		AActor* FarthestActor = nullptr;
+
+		// Run through the T-Map searching for Highest Value of Distance to Origin
+		for (auto CheckActor : ActorsToDistance)
+		{
+			if (CheckActor.Value > HighestValueDistance)
+			{
+				// We know that HighestValue can't actually be highest Value... So this found Value becomes Highest Value
+				HighestValueDistance = CheckActor.Value;
+				FarthestActor = CheckActor.Key;
+			}
+		}
+
+	ActorsToDistance.Remove(FarthestActor); // We know we WOULDN'T want this one... It's the farthest away, (HighestValueDistance), it gets removed.
+	}
+
+	*/
+
+
+
 }
 
 TArray<FVector> UAuraAbilitySystemLibrary::EvenlySpacedVectors(const FVector& Foward, const FVector& Axis, float Spread, int32 NumVectors)

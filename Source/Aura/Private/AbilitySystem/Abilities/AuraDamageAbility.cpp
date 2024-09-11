@@ -63,3 +63,9 @@ FTaggedMontage UAuraDamageAbility::GetRandomMontageFromArray(const TArray<FTagge
 	return FTaggedMontage();
 }
 
+float UAuraDamageAbility::GetDamageAtLevel() const
+{
+	const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+	return ScaledDamage;
+}
+

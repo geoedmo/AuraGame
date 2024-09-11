@@ -94,6 +94,8 @@ void AAuraCharacterBase::MutlicastHandleDeath_Implementation(const FVector& Deat
 
 	BurnDebuffComponent->Deactivate();
 
+	OnDeathDelegate.Broadcast(this);
+
 	//OnDeath.Broadcast(this);
 }
 
@@ -242,10 +244,16 @@ FOnASCRegistered AAuraCharacterBase::GetOnASCRegisteredDelegate()
 	return OnAscRegistered;
 }
 
-FOnDeath AAuraCharacterBase::GetOnDeathDelegate()
+FOnDeathSignature& AAuraCharacterBase::GetOnDeathSignature()
+{
+	return OnDeathDelegate;
+}
+
+/*FOnDeath AAuraCharacterBase::GetOnDeathDelegate()
 {
 	return OnDeath;
 }
+*/
 
 void AAuraCharacterBase::InitializeDefaultAttributes() const
 {

@@ -70,6 +70,15 @@ void UAuraBeamSpell::PerformFirstTraceFromWeapon()
 
 	}
 
+	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(MouseHitActor)) {
+
+		if (!CombatInterface->GetOnDeathSignature().IsAlreadyBound(this, &UAuraBeamSpell::PrimaryTargetDied)) {
+
+			CombatInterface->GetOnDeathSignature().AddDynamic(this, &UAuraBeamSpell::PrimaryTargetDied);
+
+		}
+
+	}
 
 }
 
@@ -85,10 +94,22 @@ void UAuraBeamSpell::StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTarget
 		GetAvatarActorFromActorInfo(), 
 		OutActors, 
 		ActorsToIgnore, 
-		850.f, 
+		500.f, 
 		MouseHitActor->GetActorLocation());
 
-	
+	for (AActor* Target : OutActors) {
+
+		if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(Target)) {
+
+			if (!CombatInterface->GetOnDeathSignature().IsAlreadyBound(this, &UAuraBeamSpell::AdditionalTargetDied)) {
+
+				CombatInterface->GetOnDeathSignature().AddDynamic(this, &UAuraBeamSpell::AdditionalTargetDied);
+
+			}
+
+		}
+
+	}
 
 
 	// int32 NumAdditionalTargets = FMath::Min(GetAbilityLevel(), MaxShockEnemies);

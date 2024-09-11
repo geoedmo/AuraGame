@@ -13,6 +13,7 @@ class UAbilitySystemComponent;
 class UNiagaraSystem;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnASCRegistered, UAbilitySystemComponent*);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnDeath, AActor*);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeathSignature, AActor*, DeadActor);
 
 
 USTRUCT(BlueprintType)
@@ -107,12 +108,15 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetIsShocking(bool InShockingBool);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool GetIsShocking();
 
 
-
+	virtual FOnDeathSignature& GetOnDeathSignature() = 0;
+	
 	virtual void Die(const FVector& DeathImpulse) = 0;
 
 	virtual FOnASCRegistered GetOnASCRegisteredDelegate() = 0;
 
-	virtual FOnDeath GetOnDeathDelegate() = 0;
+	//virtual FOnDeath GetOnDeathDelegate() = 0;
 };

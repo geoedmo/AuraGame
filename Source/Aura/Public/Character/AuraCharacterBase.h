@@ -40,10 +40,10 @@ public:
 	TArray<FTaggedMontage> AttackMontages;
 
 	virtual void Die(const FVector& DeathImpulse) override;
+	virtual FOnDeathSignature& GetOnDeathSignature() override;
 
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MutlicastHandleDeath(const FVector& DeathImpulse);
-
 	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
 	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
 	virtual bool IsDead_Implementation() const override;
@@ -55,14 +55,15 @@ public:
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
 	virtual ACharacter* GetACharacter_Implementation() override;
 	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
-
 	virtual FOnASCRegistered GetOnASCRegisteredDelegate() override;
-	virtual FOnDeath GetOnDeathDelegate() override;
+	//virtual FOnDeath GetOnDeathDelegate() override;
 
 	/* </CombatInterface> */
 
+	FOnDeathSignature OnDeathDelegate;
 	FOnASCRegistered OnAscRegistered;
-	FOnDeath OnDeath;
+	
+	//FOnDeath OnDeath;
 
 protected:
 	virtual void BeginPlay() override;
