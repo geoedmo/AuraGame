@@ -47,7 +47,13 @@ public:
 	virtual void AddToSpellPoints_Implementation(int32 InSpellPoints) override;
 	virtual int32 GetAttributePoints_Implementation() override;
 	virtual int32 GetSpellPoints_Implementation() override;
-	/* </Player Interface> */
+	/* </PlayerInterface> */
+
+	virtual void StunTagChanged(const FGameplayTag StunTag, int32 NewCount)	override;
+
+	virtual void OnRep_Stunned() override;
+
+	virtual void OnRep_Burned() override;
 
 	UPROPERTY()
 	TObjectPtr<AAuraPlayerState> AuraPlayerState;

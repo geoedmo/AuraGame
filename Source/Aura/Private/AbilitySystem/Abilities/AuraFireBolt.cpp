@@ -6,6 +6,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Aura/Aura.h"
 #include "Actor/AuraProjectile.h"
 
 FString UAuraFireBolt::GetDescription(int32 Level)
@@ -161,8 +162,17 @@ void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, co
 		Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
 
 		// Current Known Issue with Fireballs Homing.. If the target dies before the fireball reaches it, it does not explode.
+
+		
+			
+		
 		if (HomingTarget && HomingTarget->Implements<UCombatInterface>()) {
+
 			Projectile->ProjectileMovement->HomingTargetComponent = HomingTarget->GetRootComponent();
+
+			FString MyString3 = HomingTarget->GetRootComponent()->GetName();
+			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Green, FString::Printf(TEXT("This is the homing Target if Implements CI: ")) + *MyString3, true);
+
 		}
 
 		else
@@ -170,8 +180,11 @@ void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, co
 		{
 			Projectile->HomingTargetSceneComponent = NewObject<USceneComponent>(USceneComponent::StaticClass());
 			Projectile->HomingTargetSceneComponent->SetWorldLocation(ProjectileTargetLocation);
-		
+			//Projectile->HomingTargetSceneComponent->SetCollisionResponseToChannel(ECC_Target, ECollisionResponse::ECR_Ignore);
 			Projectile->ProjectileMovement->HomingTargetComponent = Projectile->HomingTargetSceneComponent;
+
+			FString MyString3 = Projectile->HomingTargetSceneComponent->GetName();
+			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Red, FString::Printf(TEXT("This is the homing Target if Implements if else: ")) + *MyString3, true);
 
 		}
 
@@ -183,9 +196,6 @@ void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, co
 		Projectile->DamageEffectParams.DamageType = Projectile->ProjectileDamageType;
 				
 		Projectile->FinishSpawning(SpawnTransform);
-
-
-
 	} 
 
 	/*

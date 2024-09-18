@@ -10,6 +10,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Interaction/EnemyInteraction.h"
 #include "Interaction/AuraPlayerInterface.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "Aura/Aura.h"
 
 
@@ -20,6 +22,10 @@ AAuraCharacterBase::AAuraCharacterBase()
 	BurnDebuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>("BurnDebuffComponent");
 	BurnDebuffComponent->SetupAttachment(GetRootComponent());
 	BurnDebuffComponent->DebuffTag = GameplayTags.Debuff_Burn;
+
+	StunDebuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>("StunDebuffComponent");
+	StunDebuffComponent->SetupAttachment(GetRootComponent());
+	StunDebuffComponent->DebuffTag = GameplayTags.Debuff_Stun;
 
 	PrimaryActorTick.bCanEverTick = false;
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
@@ -35,6 +41,15 @@ AAuraCharacterBase::AAuraCharacterBase()
 
 }
 
+void AAuraCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME_CONDITION_NOTIFY(AAuraCharacterBase, CastTime, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(AAuraCharacterBase, bIsBurned, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(AAuraCharacterBase, bIsBeingShocked, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(AAuraCharacterBase, bIsStunned, COND_None, REPNOTIFY_Always);
+}
+
 UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
@@ -45,11 +60,20 @@ UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation()
 	return HitReactMontage;
 }
 
+void AAuraCharacterBase::OnRep_Stunned()
+{
+
+}
+
+void AAuraCharacterBase::OnRep_Burned()
+{
+
+}
+
 void AAuraCharacterBase::Die(const FVector& DeathImpulse)
 {
 
 	Weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
-
 	MutlicastHandleDeath(DeathImpulse);
 
 }
@@ -72,30 +96,33 @@ void AAuraCharacterBase::MutlicastHandleDeath_Implementation(const FVector& Deat
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Target, ECR_Ignore);
 	GetMesh()->AddImpulse(DeathImpulse, NAME_None, true);
 
-	//GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Target, ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Ignore);
 
 	// So the projectiles don't go to a location they home to and not explode when the character mesh is no longer there.
 	// Below Settings makes the capsule fall through the floor which has a somewhat desireable effect... since the projectiles are homing to the capsule,
 	// they fall into the floor and explode.
 
-	if (!this->Implements<UAuraPlayerInterface>())
+	/*if (this->Implements<UEnemyInteraction>())
 	{ 	
 		GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	}
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Projectile, ECollisionResponse::ECR_Block);
+	*/
+
 	Dissolve();
 
 	// Enemy Health Bar falls through the floor, this is the solution:
 	RemoveEnemyHealthBar();
 
 	bDead = true;
-
 	BurnDebuffComponent->Deactivate();
+	StunDebuffComponent->Deactivate();
 
 	OnDeathDelegate.Broadcast(this);
-
 	//OnDeath.Broadcast(this);
 }
 
@@ -106,6 +133,12 @@ void AAuraCharacterBase::RemoveEnemyHealthBar()
 		EnemyHealthBar->SetVisibility(false);
 		EnemyHealthBar->DestroyComponent();
 	}
+}
+
+void AAuraCharacterBase::StunTagChanged(const FGameplayTag StunTag, int32 NewCount)
+{
+	bIsStunned = NewCount > 0;
+	GetCharacterMovement()->MaxWalkSpeed = bIsStunned ? 0.f : BaseWalkSpeed;
 }
 
 void AAuraCharacterBase::BeginPlay()
@@ -239,14 +272,29 @@ USkeletalMeshComponent* AAuraCharacterBase::GetWeapon_Implementation()
 	return Weapon;
 }
 
-FOnASCRegistered AAuraCharacterBase::GetOnASCRegisteredDelegate()
+FOnASCRegistered& AAuraCharacterBase::GetOnASCRegisteredDelegate()
 {
 	return OnAscRegistered;
+}
+
+void AAuraCharacterBase::ReceiveCastDurationFromGameEffect(const FGameplayTag CastTag, int32 NewCount)
+{
 }
 
 FOnDeathSignature& AAuraCharacterBase::GetOnDeathSignature()
 {
 	return OnDeathDelegate;
+}
+
+bool AAuraCharacterBase::GetIsBeingShocked_Implementation()
+{
+	return bIsBeingShocked;
+}
+
+void AAuraCharacterBase::SetIsBeingShocked_Implementation(bool InIsBeingShocked)
+{
+
+	bIsBeingShocked = InIsBeingShocked;
 }
 
 /*FOnDeath AAuraCharacterBase::GetOnDeathDelegate()

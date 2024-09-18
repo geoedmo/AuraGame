@@ -9,6 +9,7 @@
 #include "NiagaraComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/AudioComponent.h"
+#include "Components/PrimitiveComponent.h"
 #include "Aura/Aura.h"
 #include "Interaction/CombatInterface.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
@@ -38,8 +39,6 @@ AAuraProjectile::AAuraProjectile()
 	ProjectileMovement->InitialSpeed = 550.f;
 	ProjectileMovement->MaxSpeed = 550.f;
 	ProjectileMovement->ProjectileGravityScale = 0.f;
-
-
 }
 
 
@@ -53,13 +52,14 @@ void AAuraProjectile::BeginPlay()
 	
 	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(LoopingSound, GetRootComponent());
 
+
 }
 
 void AAuraProjectile::Destroyed()
 {
-
+	StopLoopingSound();
+	if (HomingTargetSceneComponent)	HomingTargetSceneComponent->DestroyComponent();
 	if (!bHit && !HasAuthority()) OnHit();
-
 	Super::Destroyed();
 
 }
@@ -68,12 +68,8 @@ void AAuraProjectile::OnHit()
 {
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactSystem, GetActorLocation());
-
-	if (LoopingSoundComponent) {
-		LoopingSoundComponent->Stop();
-		LoopingSoundComponent->DestroyComponent();
-	}
-
+	StopLoopingSound();
+	if (HomingTargetSceneComponent)	HomingTargetSceneComponent->DestroyComponent();
 	bHit = true;
 }
 
@@ -121,16 +117,27 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 			UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
 
 			//TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
-
+			
 		}
-
+		if (HomingTargetSceneComponent)	HomingTargetSceneComponent->DestroyComponent();
 		Destroy();
-
 	} 
-	else bHit = true;
 
+	else
+	{
+		bHit = true;
+		StopLoopingSound();
+		if (HomingTargetSceneComponent)	HomingTargetSceneComponent->DestroyComponent();
+	}
 
+}
 
+void AAuraProjectile::StopLoopingSound()
+{
+	if (LoopingSoundComponent) {
+		LoopingSoundComponent->Stop();
+		LoopingSoundComponent->DestroyComponent();
+	}
 }
 
 

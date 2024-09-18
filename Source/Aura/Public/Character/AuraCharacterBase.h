@@ -9,6 +9,7 @@
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "AuraCharacterBase.generated.h"
 
+
 class UAbilitySystemComponent;
 class UGameplayEffect;
 class UAttributeSet;
@@ -27,6 +28,8 @@ public:
 
 	AAuraCharacterBase();
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	/* <AbilitySystemInterface> */
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
@@ -34,6 +37,26 @@ public:
 
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 
+	UPROPERTY(ReplicatedUsing = OnRep_Stunned, BlueprintReadOnly, Category = "Combat")
+	bool bIsStunned = false;
+
+	UPROPERTY(ReplicatedUsing = OnRep_Burned, BlueprintReadOnly, Category = "Combat")
+	bool bIsBurned = false;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Combat")
+	bool bIsBeingShocked = false;
+
+	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Casting")
+	float CastTime;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
+	float BaseWalkSpeed = 600.f;
+
+	UFUNCTION()
+	virtual void OnRep_Stunned();
+
+	UFUNCTION()
+	virtual void OnRep_Burned();
 
 	/* <CombatInterface> */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
@@ -41,6 +64,11 @@ public:
 
 	virtual void Die(const FVector& DeathImpulse) override;
 	virtual FOnDeathSignature& GetOnDeathSignature() override;
+
+	virtual bool GetIsBeingShocked_Implementation() override;
+
+
+	virtual void SetIsBeingShocked_Implementation(bool InIsBeingShocked) override;
 
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MutlicastHandleDeath(const FVector& DeathImpulse);
@@ -55,10 +83,14 @@ public:
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
 	virtual ACharacter* GetACharacter_Implementation() override;
 	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
-	virtual FOnASCRegistered GetOnASCRegisteredDelegate() override;
+	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() override;
 	//virtual FOnDeath GetOnDeathDelegate() override;
 
+	virtual void ReceiveCastDurationFromGameEffect(const FGameplayTag CastTag, int32 NewCount);
 	/* </CombatInterface> */
+
+
+
 
 	FOnDeathSignature OnDeathDelegate;
 	FOnASCRegistered OnAscRegistered;
@@ -114,6 +146,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UDebuffNiagaraComponent> BurnDebuffComponent;
 
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UDebuffNiagaraComponent> StunDebuffComponent;
+
 	virtual void InitializeDefaultAttributes() const;
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
@@ -135,6 +170,8 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
+
+	virtual void StunTagChanged(const FGameplayTag StunTag, int32 NewCount);
 
 	/* Minions */
 

@@ -50,6 +50,10 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 	FHitResult CursorPosition;
 	PC->GetHitResultUnderCursor(ECC_Target, false, CursorPosition);
 
+	FString MyString3 = CursorPosition.GetActor()->GetName();
+	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Red, FString::Printf(TEXT("Cursor hit was: ")) + *MyString3, true);
+
+
 	FGameplayAbilityTargetData_SingleTargetHit* Data = new FGameplayAbilityTargetData_SingleTargetHit();
 	Data->HitResult = CursorPosition;
 

@@ -111,12 +111,18 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool GetIsShocking();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool GetIsBeingShocked();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SetIsBeingShocked(bool InIsBeingShocked);
+
 
 	virtual FOnDeathSignature& GetOnDeathSignature() = 0;
 	
 	virtual void Die(const FVector& DeathImpulse) = 0;
 
-	virtual FOnASCRegistered GetOnASCRegisteredDelegate() = 0;
+	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() = 0;
 
 	//virtual FOnDeath GetOnDeathDelegate() = 0;
 };

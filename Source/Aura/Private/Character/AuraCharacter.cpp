@@ -13,6 +13,8 @@
 #include "NiagaraComponent.h"
 #include "UI/Widget/AuraUserWidget.h"
 #include "Components/WidgetComponent.h"
+#include "AbilitySystem/Components/DebuffNiagaraComponent.h"
+#include "AuraGameplayTags.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/WidgetController/AuraWidgetController.h"
 
@@ -171,6 +173,49 @@ int32 AAuraCharacter::GetSpellPoints_Implementation()
 	return AuraPlayerState->GetPlayerSpellPoints();
 }
 
+void AAuraCharacter::StunTagChanged(const FGameplayTag StunTag, int32 NewCount)
+{
+	Super::StunTagChanged(StunTag, NewCount);
+}
+
+void AAuraCharacter::OnRep_Stunned()
+{
+
+	if (UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)) {
+
+		const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+		FGameplayTagContainer Container;
+		Container.AddTag(GameplayTags.Player_Block_CursorTrace);
+		Container.AddTag(GameplayTags.Player_Block_InputReleased);
+		Container.AddTag(GameplayTags.Player_Block_InputPressed);
+		Container.AddTag(GameplayTags.Player_Block_InputHeld);
+
+		if (bIsStunned) {
+			AuraASC->AddLooseGameplayTags(Container);
+			StunDebuffComponent->Activate();
+		}
+		else
+		{
+			AuraASC->RemoveLooseGameplayTags(Container);
+			StunDebuffComponent->Deactivate();
+		}
+	}
+
+}
+
+void AAuraCharacter::OnRep_Burned()
+{
+
+	if (bIsBurned) {
+
+		BurnDebuffComponent->Activate();
+	}
+	else {
+		BurnDebuffComponent->Deactivate();
+	}
+
+}
+
 void AAuraCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -192,6 +237,9 @@ void AAuraCharacter::InitAbilityActorInfo()
 	AttributeSet = AuraPlayerState->GetAttributeSet();
 	OnAscRegistered.Broadcast(AbilitySystemComponent);
 
+
+	AbilitySystemComponent->RegisterGameplayTagEvent(FAuraGameplayTags::Get().Debuff_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AAuraCharacter::StunTagChanged);
+
 	AAuraPlayerController* AuraPlayerController = Cast<AAuraPlayerController>(GetController());
 	if (AuraPlayerController) {
 
@@ -201,6 +249,7 @@ void AAuraCharacter::InitAbilityActorInfo()
 		}
 
 	}
+
 	InitializeDefaultAttributes();
 
 }

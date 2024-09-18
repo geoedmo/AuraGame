@@ -396,7 +396,6 @@ TArray<FRotator> UAuraAbilitySystemLibrary::EvenlySpacedRotators(const FVector& 
 		for (int32 i = 0; i < NumRotators; i++) {
 
 			const FVector Direction = LeftOfSpread.RotateAngleAxis(DeltaSpread * i, Axis);
-
 			Rotators.Add(Direction.Rotation());
 		}
 
@@ -416,33 +415,23 @@ void UAuraAbilitySystemLibrary::GetClosestTargets(int32 MaxTargets, const TArray
 
 	if (InActors.Num() > MaxTargets) 
 	{
-		//Populate the TMap of Actors to their Distances
 		for (int32 i = 0; i < InActors.Num(); i++) 
 		{
 			float ActorDistanceToOrigin = (InActors[i]->GetActorLocation() - Origin).Length();
 			ActorsToDistance.Add(InActors[i], ActorDistanceToOrigin);
 		}
-
 		TArray<float> ActorDistances;
 		ActorsToDistance.GenerateValueArray(ActorDistances);
 		ActorDistances.Sort(); 
-
-		// Closest Distance will be first. Can flip this to do the farthest first, 
-		// but probably overall more performant with tons of enemies on the screen
-		// to do it from the bottom up as the max times run of the while loop will be MaxTargets
-
 		int32 DistanceIndex = 0;
 		while (DistanceIndex < MaxTargets)
 		{
-			//Search first value in array, which is closest distance over the T-Map and add that to the OutClosestTargets array
 			OutClosestTargets.Add(*ActorsToDistance.FindKey(ActorDistances[DistanceIndex]));
 			DistanceIndex++;
 		}
-
 	} 
 	else
 	{
-		// Since the amount of Targets was less than the Max, the OutClosestTargets array becomes the InActors array.
 		OutClosestTargets = InActors;
 	}
 

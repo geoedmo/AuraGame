@@ -37,6 +37,8 @@ AAuraEnemy::AAuraEnemy()
 
 	EnemyHealthBar = CreateDefaultSubobject<UWidgetComponent>("EnemyHealthBar");
 	EnemyHealthBar->SetupAttachment(GetRootComponent());
+
+	BaseWalkSpeed = 250.f;
 }
 
 void AAuraEnemy::PossessedBy(AController* NewController)
@@ -141,6 +143,15 @@ void AAuraEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCou
 	}
 }
 
+void AAuraEnemy::StunTagChanged(const FGameplayTag StunTag, int32 NewCount)
+{
+	Super::StunTagChanged(StunTag, NewCount);
+	if (AuraAIController && AuraAIController->GetBlackboardComponent())
+	{
+		AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("Stunned"), bIsStunned);
+	}
+}
+
 void AAuraEnemy::ReceiveCastDurationFromGameEffect(const FGameplayTag CastTag, int32 NewCount)
 {
 	if (NewCount > 0) 
@@ -166,6 +177,8 @@ void AAuraEnemy::InitAbilityActorInfo()
 
 	OnAscRegistered.Broadcast(AbilitySystemComponent);
 
+	AuraASC->RegisterGameplayTagEvent(FAuraGameplayTags::Get().Debuff_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AAuraEnemy::StunTagChanged);
+
 }
 
 void AAuraEnemy::InitializeDefaultAttributes() const
@@ -173,13 +186,6 @@ void AAuraEnemy::InitializeDefaultAttributes() const
 
 	// Initialize these class defaults which pull from the data asset, and inside use gameplay effects to set attributes at the start
 	UAuraAbilitySystemLibrary::InitializeClassDefaultAttributes(this, CharacterClass, Level, AbilitySystemComponent);
-}
-
-
-void AAuraEnemy::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME_CONDITION_NOTIFY(AAuraEnemy, CastTime, COND_None, REPNOTIFY_Always);
 }
 
 void AAuraEnemy::HighlightActor()

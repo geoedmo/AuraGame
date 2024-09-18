@@ -178,9 +178,13 @@ void UAuraAttributeSet::HandleDamage(FEffectProperties& Props)
 				}
 			}
 
-			FGameplayTagContainer TagContainer;
-			TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
-			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			if (Props.TargetAvatarActor->Implements<UCombatInterface>()  && !ICombatInterface::Execute_GetIsBeingShocked(Props.TargetAvatarActor)) {
+				
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
+				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			
+			}
 
 		}
 
@@ -280,9 +284,16 @@ void UAuraAttributeSet::HandleDebuffs(FEffectProperties& Props)
 	UTargetTagsGameplayEffectComponent& Component = Effect->FindOrAddComponent<UTargetTagsGameplayEffectComponent>();
 	TagContainer.Added.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
 	TagContainer.CombinedTags.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
+
+	//Deal with Stun
+	if (GameplayTags.DamageTypesToDebuffs[DamageType].MatchesTagExact(GameplayTags.Debuff_Stun)) {
+		TagContainer.Added.AddTag(GameplayTags.Player_Block_InputHeld);
+		TagContainer.Added.AddTag(GameplayTags.Player_Block_CursorTrace);
+		TagContainer.Added.AddTag(GameplayTags.Player_Block_InputPressed);
+		TagContainer.Added.AddTag(GameplayTags.Player_Block_InputReleased);
+	}
+
 	Component.SetAndApplyTargetTagChanges(TagContainer);
-
-
 
 	Effect->StackingType = EGameplayEffectStackingType::AggregateBySource;
 	Effect->StackLimitCount = 1;

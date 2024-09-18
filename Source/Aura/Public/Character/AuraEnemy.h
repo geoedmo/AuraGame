@@ -6,7 +6,6 @@
 #include "Interaction/EnemyInteraction.h"
 #include "Character/AuraCharacterBase.h"
 #include "UI/WidgetController/AuraOverlayWidgetController.h"
-#include "Net/UnrealNetwork.h"
 #include "AuraEnemy.generated.h"
 
 /**
@@ -46,19 +45,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Combat")
 	bool bHitReacting = false;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
-	float BaseWalkSpeed = 250.f;
-
 	UPROPERTY(BlueprintReadOnly, Category = "Combat")
 	float LifeSpan = 5.f;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Combat")
 	TObjectPtr<AActor> CombatTarget;
 
-	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Casting")
-	float CastTime;
-
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	/* <EnemyInteraction> */
 
 	// ** Overrides ** //
@@ -76,8 +68,9 @@ public:
 	/** </Combat Interface> **/
 
 	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
-	
-	void ReceiveCastDurationFromGameEffect(const FGameplayTag CastTag, int32 NewCount);
+
+	virtual void StunTagChanged(const FGameplayTag StunTag, int32 NewCount) override;
+	virtual void ReceiveCastDurationFromGameEffect(const FGameplayTag CastTag, int32 NewCount) override;
 
 protected:
 

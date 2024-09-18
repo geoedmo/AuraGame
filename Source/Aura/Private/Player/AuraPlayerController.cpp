@@ -16,6 +16,7 @@
 #include "Player/AuraPlayerState.h"
 #include "UI/Widget/DamageTextComponent.h"
 #include "NavigationPath.h"
+#include "Interaction/CombatInterface.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 
@@ -147,6 +148,16 @@ void AAuraPlayerController::CursorTrace()
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 
 	if (!CursorHit.bBlockingHit) return;
+	
+	
+	if (CursorHit.GetActor()->Implements<UCombatInterface>() && ICombatInterface::Execute_IsDead(CursorHit.GetActor())) {
+		
+		if (LastActor) LastActor->UnhighlightActor();
+		LastActor = nullptr;
+		ThisActor = nullptr;
+		return;
+	}
+	
 
 	LastActor = ThisActor; // this is being done before, so logically first
 	ThisActor = CursorHit.GetActor(); // this is sort of the "current" actor being highlighted
