@@ -29,7 +29,7 @@ protected:
 	float ProjectileSpread = 90.f;
 
 	UPROPERTY(EditDefaultsOnly)
-	int32 MaxNumProjectiles = 100;
+	int32 MaxNumProjectiles = 5;
 
 	UPROPERTY(EditDefaultsOnly)
 	float HomingAccelerationMax = 1600.f;

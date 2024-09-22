@@ -78,6 +78,11 @@ public:
 	FGameplayTag Abilities_Status_Offensive;
 	FGameplayTag Abilities_Status_Passive;
 	FGameplayTag Abilities_Status_None;
+	
+	/** Passive Abilities **/
+	FGameplayTag Abilities_Passive_HaloOfProtection;
+	FGameplayTag Abilities_Passive_LifeSiphon;
+	FGameplayTag Abilities_Passive_ManaSiphon;
 
 	/** Cooldowns **/
 	FGameplayTag Cooldowns_Fire_FireBolt;

@@ -117,6 +117,12 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void SetIsBeingShocked(bool InIsBeingShocked);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool GetIsCasting();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SetIsCasting(bool InIsCasting);
+
 
 	virtual FOnDeathSignature& GetOnDeathSignature() = 0;
 	

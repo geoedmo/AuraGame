@@ -73,7 +73,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PrevSlot);
 
-
+	UFUNCTION(BlueprintCallable)
+	void OnAbilityStatusChanged(const FGameplayTag& AbilityTag, const FGameplayTag& AbilityStatus, int32 Level);
 
 
 

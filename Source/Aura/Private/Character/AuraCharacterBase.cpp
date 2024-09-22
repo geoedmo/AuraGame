@@ -45,9 +45,11 @@ void AAuraCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME_CONDITION_NOTIFY(AAuraCharacterBase, CastTime, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(AAuraCharacterBase, bIsCasting, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(AAuraCharacterBase, bIsBurned, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(AAuraCharacterBase, bIsBeingShocked, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(AAuraCharacterBase, bIsStunned, COND_None, REPNOTIFY_Always);
+
 }
 
 UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
@@ -295,6 +297,16 @@ void AAuraCharacterBase::SetIsBeingShocked_Implementation(bool InIsBeingShocked)
 {
 
 	bIsBeingShocked = InIsBeingShocked;
+}
+
+bool AAuraCharacterBase::GetIsCasting_Implementation()
+{
+	return bIsCasting;
+}
+
+void AAuraCharacterBase::SetIsCasting_Implementation(bool InIsCasting)
+{
+	bIsCasting = InIsCasting;
 }
 
 /*FOnDeath AAuraCharacterBase::GetOnDeathDelegate()

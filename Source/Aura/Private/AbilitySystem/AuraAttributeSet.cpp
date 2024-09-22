@@ -224,11 +224,14 @@ void UAuraAttributeSet::HandleXP(FEffectProperties& Props)
 
 			IAuraPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter, NumLevelsGained);
 
-			for (int i = 0; i < NumLevelsGained; i++)
+			int32 AttributePointsAwarded = 0;
+			int32 SpellPointsAwarded = 0;
+
+			for (int32 i = 0; i < NumLevelsGained; i++)
 			{
 				// Get Each New Level's Attribute/Spell Points Awarded
-				int32 AttributePointsAwarded = IAuraPlayerInterface::Execute_GetAttributePointsRewarded(Props.SourceCharacter, CurrentLevel);
-				int32 SpellPointsAwarded = IAuraPlayerInterface::Execute_GetAttributePointsRewarded(Props.SourceCharacter, CurrentLevel);
+				AttributePointsAwarded = IAuraPlayerInterface::Execute_GetAttributePointsRewarded(Props.SourceCharacter, CurrentLevel);
+				SpellPointsAwarded = IAuraPlayerInterface::Execute_GetAttributePointsRewarded(Props.SourceCharacter, CurrentLevel);
 				IAuraPlayerInterface::Execute_AddToAttributePoints(Props.SourceCharacter, AttributePointsAwarded);
 				IAuraPlayerInterface::Execute_AddToSpellPoints(Props.SourceCharacter, SpellPointsAwarded);
 

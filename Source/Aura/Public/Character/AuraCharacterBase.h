@@ -46,6 +46,9 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Combat")
 	bool bIsBeingShocked = false;
 
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Combat")
+	bool bIsCasting = false;
+
 	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Casting")
 	float CastTime;
 
@@ -59,16 +62,18 @@ public:
 	virtual void OnRep_Burned();
 
 	/* <CombatInterface> */
+
+	//  ** Boolean Setters/Getters (Mostly for Animation States/Casting)
+	virtual bool GetIsBeingShocked_Implementation() override;
+	virtual void SetIsBeingShocked_Implementation(bool InIsBeingShocked) override;
+	virtual bool GetIsCasting_Implementation() override;
+	virtual void SetIsCasting_Implementation(bool InIsCasting) override;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
 	TArray<FTaggedMontage> AttackMontages;
 
 	virtual void Die(const FVector& DeathImpulse) override;
 	virtual FOnDeathSignature& GetOnDeathSignature() override;
-
-	virtual bool GetIsBeingShocked_Implementation() override;
-
-
-	virtual void SetIsBeingShocked_Implementation(bool InIsBeingShocked) override;
 
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MutlicastHandleDeath(const FVector& DeathImpulse);
