@@ -213,6 +213,7 @@ void UAuraAbilitySystemComponent::ServerEquipAbility_Implementation(const FGamep
 					// Is bool PassiveAbilitySpec(Spec)
 					if (IsPassiveAbility(*SpecWithSlot)) 
 					{
+						MulticastActivatePassiveEffect(GetAbilityTagFromSpec(*SpecWithSlot), false);
 						PassiveAbilityDeactivateDelegate.Broadcast(GetAbilityTagFromSpec(*SpecWithSlot));
 					}
 
@@ -225,13 +226,14 @@ void UAuraAbilitySystemComponent::ServerEquipAbility_Implementation(const FGamep
 
 				if (IsPassiveAbility(*AbilitySpec)) {
 					TryActivateAbility(AbilitySpec->Handle);
+					MulticastActivatePassiveEffect(AbilityTag, true);
 				}
 			}
 			AssignSlotToAbility(*AbilitySpec, Slot);
 			MarkAbilitySpecDirty(*AbilitySpec);
 
 		}
-
+		
 		ClientEquipAbility(AbilityTag, GameplayTags.Abilities_Status_Equipped, Slot, PrevSlot);
 
 	}
@@ -245,6 +247,11 @@ void UAuraAbilitySystemComponent::ClientEquipAbility_Implementation(const FGamep
 
 	AbilityEquippedDelegate.Broadcast(AbilityTag, Status, Slot, PrevSlot);
 
+}
+
+void UAuraAbilitySystemComponent::MulticastActivatePassiveEffect_Implementation(const FGameplayTag& AbilityTag, bool bActivate)
+{
+	ActivatePassiveEffect.Broadcast(AbilityTag, bActivate);
 }
 
 float UAuraAbilitySystemComponent::GetGameplayEffectDurationBasedOnIfTagHeld(const FGameplayTag& TagToSearch)

@@ -5,8 +5,6 @@
 #include "AuraGameplayTags.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "Aura/Aura.h"
 #include "Actor/AuraProjectile.h"
 
 FString UAuraFireBolt::GetDescription(int32 Level)
