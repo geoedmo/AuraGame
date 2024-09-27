@@ -8,6 +8,7 @@
 #include "Interaction/CombatInterface.h"
 #include "AuraAbilityTypes.h"
 #include "AbilitySystemComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // raw internal struct only used here
 
@@ -167,9 +168,11 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	}
 
-	// Get All Damage Types by Spec
-	float Damage = 0.f;
+	/*
+	 * Damage Calculations
+	 */
 	
+	float Damage = 0.f;
 	for (const TTuple<FGameplayTag, FGameplayTag> Pair : GameplayTags.DamageTypesToResistances)
 	{
 
@@ -187,9 +190,51 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		Resistance = FMath::Clamp(Resistance, 0.f, 100.f);
 
 		DamageTypeValue *= (100.f - Resistance) / 100.f;
+		if (DamageTypeValue <= 0.f)
+		{
+			continue;
+		}
 
+		
+		// Check for Radial Damage
+		if (UAuraAbilitySystemLibrary::IsRadialDamage(EffectContextHandle))
+		{
+			// 1. Override TakeDamage in AuraCharacterBase *
+			// 2. Create Delegate "OnDamageDelegate" *
+			// 3. Broadcast Damage received in TakeDamage
+			// 4. Bind OnDamageDelegate on the Victim here in this if statement
+			// 5. Call UGameplayStatics::ApplyRadialDamageWithFalloff, to cause damage (this will result in TakeDamage being called on the victim. Which will broadcast OnDamageDelegate)
+			// 6. In Lambda, set DamageTypeValue to the Damage Received from the broadcast.
+
+			if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(TargetAvatar))
+			{
+				CombatInterface->GetOnDamageSignature().AddLambda(
+					[&](float DamageAmount)
+					{
+						DamageTypeValue = DamageAmount;
+					}
+					);
+			}
+
+			UGameplayStatics::ApplyRadialDamageWithFalloff(
+				TargetAvatar,
+				DamageTypeValue,
+				1.f,
+				UAuraAbilitySystemLibrary::GetRadialDamageOrigin(EffectContextHandle),
+				UAuraAbilitySystemLibrary::RadialDamageInnerRadius(EffectContextHandle),
+				UAuraAbilitySystemLibrary::RadialDamageOuterRadius(EffectContextHandle),
+				1.f,
+				UDamageType::StaticClass(),
+				TArray<AActor*>(),
+				SourceAvatar,
+				nullptr);
+		}
+		
+		
 		Damage += DamageTypeValue;
 
+
+		
 
 	}
 

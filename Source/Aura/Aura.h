@@ -10,4 +10,4 @@
 
 #define ECC_Target ECollisionChannel::ECC_GameTraceChannel2
 
-
+#define ECC_ExcludePlayers ECollisionChannel::ECC_GameTraceChannel3

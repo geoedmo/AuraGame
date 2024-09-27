@@ -61,6 +61,18 @@ struct FDamageEffectParams {
 
 	UPROPERTY(BlueprintReadWrite)
 	FVector Knockback = FVector::ZeroVector;
+	
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsRadialDamage = false;
+	
+	UPROPERTY(BlueprintReadWrite)
+	float RadialDamageInnerRadius = 0.f;
+	
+	UPROPERTY(BlueprintReadWrite)
+	float RadialDamageOuterRadius = 0.f;
+	
+	UPROPERTY(BlueprintReadWrite)
+	FVector RadialDamageOrigin = FVector::ZeroVector;
 };
 
 
@@ -71,7 +83,10 @@ struct FAuraGameplayEffectContext : public FGameplayEffectContext
 
 public:
 
-
+	/*
+	*  Getters
+	*/
+	
 	bool IsCriticalHit() const { return bIsCriticalHit; }
 	bool IsBlockedHit() const { return bIsBlockedHit; }
 	bool IsSuccessfulDebuff() const { return bIsSuccessfulDebuff; }
@@ -83,7 +98,14 @@ public:
 	float GetDeathImpulseMagnitude() const { return DeathImpulseMagnitude; }
 	FVector GetKnockback() const { return Knockback; }
 	bool IsSuccessfulKnockback () const { return bIsSuccessfulKnockback; }
-
+	float GetRadialDamageOuterRadius() const { return RadialDamageOuterRadius; }
+	float GetRadialDamageInnerRadius() const { return RadialDamageInnerRadius; }
+	FVector GetRadialDamageOrigin() const { return RadialDamageOrigin; }
+	bool IsRadialDamage() const { return bIsRadialDamage; }
+	
+	/*
+	*  Setters
+	*/
 	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit;}
 	void SetIsBlockedHit(bool bInIsBlockedHit) { bIsBlockedHit = bInIsBlockedHit; }
 	void SetIsSuccessfulDebuff(bool bInIsSuccessfulDebuff) { bIsSuccessfulDebuff = bInIsSuccessfulDebuff; }
@@ -95,7 +117,11 @@ public:
 	void SetDeathImpulseMagnitude(float InDeathImpulseMagnitude) { DeathImpulseMagnitude = InDeathImpulseMagnitude; }
 	void SetKnockback(const FVector& InKnockback) { Knockback = InKnockback; }
 	void SetIsSuccessfulKnockback(bool bInIsSuccessfulKnockback) { bIsSuccessfulKnockback = bInIsSuccessfulKnockback; }
-
+	void SetIsRadialDamage(bool bInIsRadialDamage)	{ bIsRadialDamage = bInIsRadialDamage; }
+	void SetRadialDamageOrigin(const FVector& InRadialDamageOrigin){ RadialDamageOrigin = InRadialDamageOrigin; }
+	void SetRadialDamageOuterRadius(float InRadialDamageOuterRadius) { RadialDamageOuterRadius = InRadialDamageOuterRadius;}
+	void SetRadialDamageInnerRadius(float InRadialDamageInnerRadius) { RadialDamageInnerRadius = InRadialDamageInnerRadius;}
+	
 	virtual UScriptStruct* GetScriptStruct() const override
 	{
 		return StaticStruct();
@@ -150,6 +176,18 @@ protected:
 
 	UPROPERTY()
 	bool bIsSuccessfulKnockback = false;
+
+	UPROPERTY()
+	bool bIsRadialDamage = false;
+	
+	UPROPERTY()
+	float RadialDamageInnerRadius = 0.f;
+	
+	UPROPERTY()
+	float RadialDamageOuterRadius = 0.f;
+	
+	UPROPERTY()
+	FVector RadialDamageOrigin = FVector::ZeroVector;
 };
 
 template<>

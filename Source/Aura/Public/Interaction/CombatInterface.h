@@ -14,7 +14,7 @@ class UNiagaraSystem;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnASCRegistered, UAbilitySystemComponent*);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnDeath, AActor*);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeathSignature, AActor*, DeadActor);
-
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnDamageSignature, float /*Damage Amount*/);
 
 USTRUCT(BlueprintType)
 struct FTaggedMontage
@@ -123,11 +123,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void SetIsCasting(bool InIsCasting);
 
-
-	virtual FOnDeathSignature& GetOnDeathSignature() = 0;
 	
 	virtual void Die(const FVector& DeathImpulse) = 0;
-
+	virtual FOnDeathSignature& GetOnDeathSignature() = 0;
+	virtual FOnDamageSignature& GetOnDamageSignature() = 0;
 	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() = 0;
 
 	//virtual FOnDeath GetOnDeathDelegate() = 0;

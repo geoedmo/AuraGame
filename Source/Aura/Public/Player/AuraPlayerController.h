@@ -19,7 +19,7 @@ class AAuraPlayerState;
 class UDamageTextComponent;
 class UNiagaraSystem;
 class UNiagaraComponent;
-
+class AMagicCircle;
 
 UCLASS()
 class AURA_API AAuraPlayerController : public APlayerController
@@ -35,15 +35,29 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit);
 
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<AMagicCircle> MagicCircle;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AMagicCircle> MagicCircleClass;
+
+	UFUNCTION(BlueprintCallable)
+	void ShowMagicCircle(UMaterialInterface* DecalMaterial);
+	
+	UFUNCTION(BlueprintCallable)
+	void HideMagicCircle();
+
+	
+	void UpdateMagicCircleLocation();
+	
+	
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UNiagaraSystem> ClickNiagara;
 
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UNiagaraComponent> ClickNiagaraComp;
-
-
+	
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 

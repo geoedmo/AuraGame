@@ -64,6 +64,16 @@ void AAuraCharacterBase::Tick(float DeltaSeconds)
 	
 }
 
+float AAuraCharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
+{
+	float DamageTaken =  Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	OnDamageDelegate.Broadcast(DamageTaken);
+
+	return DamageTaken;
+	
+}
+
 void AAuraCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -304,6 +314,11 @@ FOnASCRegistered& AAuraCharacterBase::GetOnASCRegisteredDelegate()
 
 void AAuraCharacterBase::ReceiveCastDurationFromGameEffect(const FGameplayTag CastTag, int32 NewCount)
 {
+}
+
+FOnDamageSignature& AAuraCharacterBase::GetOnDamageSignature()
+{
+	return OnDamageDelegate;
 }
 
 FOnDeathSignature& AAuraCharacterBase::GetOnDeathSignature()

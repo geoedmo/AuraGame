@@ -11,6 +11,7 @@
 #include "AuraCharacterBase.generated.h"
 
 
+
 class UAbilitySystemComponent;
 class UGameplayEffect;
 class UAttributeSet;
@@ -28,8 +29,12 @@ class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInte
 public:
 	
 	AAuraCharacterBase();
+	
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	/* <AbilitySystemInterface> */
@@ -94,13 +99,14 @@ public:
 	//virtual FOnDeath GetOnDeathDelegate() override;
 
 	virtual void ReceiveCastDurationFromGameEffect(const FGameplayTag CastTag, int32 NewCount);
+
+	virtual FOnDamageSignature& GetOnDamageSignature() override;
+	
 	/* </CombatInterface> */
-
-
-
-
+	
 	FOnDeathSignature OnDeathDelegate;
 	FOnASCRegistered OnAscRegistered;
+	FOnDamageSignature OnDamageDelegate;
 	
 	//FOnDeath OnDeath;
 
