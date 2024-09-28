@@ -131,9 +131,8 @@ void UAuraOverlayWidgetController::ReceiveXPInformation(int32 NewXP)
 	AuraPlayerState = GetAuraPS();
 	ULevelUpInfo* LevelUpInfo = AuraPlayerState->LevelUpInfo;
 	checkf(LevelUpInfo, TEXT("Unable to find LevelUpInfo, Please fillout AuraPlayerState Blueprint"));
-
 	const int32 Level = LevelUpInfo->FindLevelForXP(NewXP);
-	const int32 MaxLevel = LevelUpInfo->LevelUpInformation.Num();
+	const int32 MaxLevel = LevelUpInfo->LevelUpInformation.Num() - 1; // THERE IT IS
 
 	if (Level <= MaxLevel && Level > 0) {
 
@@ -146,8 +145,6 @@ void UAuraOverlayWidgetController::ReceiveXPInformation(int32 NewXP)
 
 		OnXPPercentChangedDelegate.Broadcast(XPBarPercentForThisLevel);
 	}
-
-
 }
 
 void UAuraOverlayWidgetController::CastTagChanged(const FGameplayTag InCastTag, int32 NewCount)

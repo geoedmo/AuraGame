@@ -12,17 +12,19 @@ int32 ULevelUpInfo::FindLevelForXP(int32 XP) const
 
 		//LevelUpInformation[1] = Level 1 Information
 		//LevelUpInformation[2] = Level 2 Information
+
 		if (LevelUpInformation.Num() - 1 <= 1) return Level;
 
-			if (XP >= LevelUpInformation[Level].LevelUpRequirement) {
-				++Level;
-			}
-			else
-			{
-
-				bSearching = false;
-
-			}
+		// Checking the case for max level, we don't have any more entries in the data asset.
+		if (LevelUpInformation.Num() == Level + 1) return Level;
+		
+		if (XP >= LevelUpInformation[Level].LevelUpRequirement) {
+			++Level;
+		}
+		else
+		{
+			bSearching = false;
+		}
 
 	}
 

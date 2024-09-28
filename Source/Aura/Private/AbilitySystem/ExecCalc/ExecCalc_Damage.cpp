@@ -97,7 +97,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		SourcePlayerLevel = ICombatInterface::Execute_GetPlayerLevel(SourceAvatar);
 	}
 	int32 TargetPlayerLevel = 1;
-	if (TargetAvatar->Implements<UCombatInterface>()) {
+	if (IsValid(TargetAvatar) && TargetAvatar->Implements<UCombatInterface>()) {
 		TargetPlayerLevel = ICombatInterface::Execute_GetPlayerLevel(TargetAvatar);
 	}
 

@@ -168,9 +168,6 @@ void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, co
 
 			Projectile->ProjectileMovement->HomingTargetComponent = HomingTarget->GetRootComponent();
 
-			FString MyString3 = HomingTarget->GetRootComponent()->GetName();
-			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Green, FString::Printf(TEXT("This is the homing Target if Implements CI: ")) + *MyString3, true);
-
 		}
 
 		else
@@ -180,9 +177,6 @@ void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, co
 			Projectile->HomingTargetSceneComponent->SetWorldLocation(ProjectileTargetLocation);
 			//Projectile->HomingTargetSceneComponent->SetCollisionResponseToChannel(ECC_Target, ECollisionResponse::ECR_Ignore);
 			Projectile->ProjectileMovement->HomingTargetComponent = Projectile->HomingTargetSceneComponent;
-
-			FString MyString3 = Projectile->HomingTargetSceneComponent->GetName();
-			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.f, FColor::Red, FString::Printf(TEXT("This is the homing Target if Implements if else: ")) + *MyString3, true);
 
 		}
 
