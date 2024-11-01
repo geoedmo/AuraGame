@@ -24,18 +24,34 @@ public:
 
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<AAuraProjectile> ProjectileClass;
 
-	//	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	//TSubclassOf<AAuraProjectile> ProjectileClass;
+	UPROPERTY(EditDefaultsOnly)
+	float ProjectileSpread = 90.f;
+	
+	UPROPERTY(EditDefaultsOnly)
+	float HomingAccelerationMax = 1600.f;
 
+	UPROPERTY(EditDefaultsOnly)
+	float HomingAccelerationMin = 3200.f;
 
+	UPROPERTY(EditDefaultsOnly)
+	bool bLaunchHomingProjectiles = true;
 
 	UPROPERTY(EditDefaultsOnly)
 	int32 NumProjectiles = 5;
+		
+	UPROPERTY(EditDefaultsOnly)
+	int32 MaxNumProjectiles = 5;
+	
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Projectile")	
-	void SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, TSubclassOf<AAuraProjectile> ProjectileClass);
+	void SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, TSubclassOf<AAuraProjectile> ProjectileType);
+
+	UFUNCTION(BlueprintCallable)
+	virtual void SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, AActor* HomingTarget, bool bOverridePitch, float PitchOverride);
 
 };

@@ -170,11 +170,13 @@ void UAuraAttributeSet::HandleDamage(FEffectProperties& Props)
 			const bool bIsSuccessfulKnockback = UAuraAbilitySystemLibrary::IsSuccessfulKnockback(ContextHandle);
 
 			if (bIsSuccessfulKnockback)
-			{			
+			{
+				FVector KnockbackDirection = UAuraAbilitySystemLibrary::GetKnockback(ContextHandle);
+				
 				if (Props.TargetAvatarActor->Implements<UCombatInterface>())
 				{
 					ACharacter* Character = ICombatInterface::Execute_GetACharacter(Props.TargetAvatarActor);
-					Character->LaunchCharacter(UAuraAbilitySystemLibrary::GetKnockback(ContextHandle), false, false);
+					Character->LaunchCharacter(KnockbackDirection, false, false);
 				}
 			}
 

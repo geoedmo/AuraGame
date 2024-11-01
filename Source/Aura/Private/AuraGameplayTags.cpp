@@ -164,7 +164,11 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName("Abilities.Fire.FireBolt"),
 		FString("FireBolt Ability Tag")
 	);
-
+	
+	GameplayTags.Abilities_Fire_FireBlast = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Fire.FireBlast"),
+		FString("FireBlast Ability Tag")
+	);
 	GameplayTags.Abilities_Lightning_Electrocute = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.Lightning.Electrocute"),
 		FString("Electrocute Ability Tag")
@@ -246,6 +250,10 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FString("FireBolt Cooldown Tag")
 	);
 	
+	GameplayTags.Cooldowns_Fire_FireBlast = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	FName("Cooldowns.Fire.FireBlast"),
+	FString("FireBlast Cooldown Tag")
+);
 	GameplayTags.Cooldowns_Lightning_Electrocute = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Cooldowns.Lightning.Electrocute"),
 		FString("Electrocute Cooldown Tag")
@@ -466,5 +474,15 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName("Effects.HitReact"),
 		FString("Hit Reaction")
 	);
-}
+
+	/*
+	 * GameplayCues
+	 */
+
+	GameplayTags.GameplayCue_FireBlast = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	FName("GameplayCue.FireBlast"),
+	FString("Gameplay Cue for Fireblast")
+	);
+
+}	
 

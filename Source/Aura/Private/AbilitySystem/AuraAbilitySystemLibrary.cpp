@@ -215,6 +215,53 @@ bool UAuraAbilitySystemLibrary::IsNotFriend(AActor* FirstActor, AActor* SecondAc
 
 }
 
+void UAuraAbilitySystemLibrary::SetIsRadialDamageEffectParams(FDamageEffectParams& ExplosionEffectParams,
+	bool bInIsRadialDamage, float RadialDamageInnerRadius, float RadialDamageOuterRadius, FVector InRadialDamageOrigin)
+{
+	if (bInIsRadialDamage)
+	{
+		ExplosionEffectParams.bIsRadialDamage = bInIsRadialDamage;
+		ExplosionEffectParams.RadialDamageInnerRadius = RadialDamageInnerRadius;
+		ExplosionEffectParams.RadialDamageOuterRadius = RadialDamageOuterRadius;
+		ExplosionEffectParams.RadialDamageOrigin = InRadialDamageOrigin;
+	}
+	ExplosionEffectParams.bIsRadialDamage = bInIsRadialDamage;
+}
+
+void UAuraAbilitySystemLibrary::SetTargetDamageEffectParamsASC(FDamageEffectParams& ExplosionEffectParams,
+	UAbilitySystemComponent* InTargetASC)
+{
+	ExplosionEffectParams.TargetAbilitySystemComponent = InTargetASC;
+}
+
+void UAuraAbilitySystemLibrary::SetKnockbackParams(FDamageEffectParams& DamageEffectParams, FVector KnockbackDirection, float InKnockbackChance, float Magnitude)
+{
+	KnockbackDirection.Normalize();
+
+	DamageEffectParams.KnockbackChance = InKnockbackChance;
+	if (Magnitude == 0.f)
+	{
+		DamageEffectParams.Knockback = KnockbackDirection * DamageEffectParams.KnockbackMagnitude;
+	}
+	else
+	{
+		DamageEffectParams.Knockback = KnockbackDirection * Magnitude;
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetDeathImpulseDirection(FDamageEffectParams& DamageEffectParams, FVector ImpulseDirection, float Magnitude)
+{
+	ImpulseDirection.Normalize();
+	if (Magnitude == 0.f)
+	{
+		DamageEffectParams.DeathImpulse = ImpulseDirection * DamageEffectParams.DeathImpulseMagnitude;
+	}
+	else
+	{
+		DamageEffectParams.DeathImpulse = ImpulseDirection * Magnitude;
+	}
+}
+
 int32 UAuraAbilitySystemLibrary::GetXPForCharacterClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 Level)
 {
 	UCharacterClassInfo* Info = GetCharacterClassInfo(WorldContextObject);
@@ -235,9 +282,10 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
 
 	FGameplayEffectContextHandle EffectContextHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeEffectContext();
 	EffectContextHandle.AddSourceObject(SourceAvatarActor);
+
+	
 	SetKnockback(EffectContextHandle, DamageEffectParams.Knockback);
 	SetDeathImpulse(EffectContextHandle, DamageEffectParams.DeathImpulse);
-	
 	SetIsRadialDamage(EffectContextHandle, DamageEffectParams.bIsRadialDamage);
 	SetRadialDamageInnerRadius(EffectContextHandle, DamageEffectParams.RadialDamageInnerRadius);
 	SetRadialDamageOuterRadius(EffectContextHandle, DamageEffectParams.RadialDamageOuterRadius);
@@ -253,8 +301,8 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
         	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTags.Debuff_Damage, DamageEffectParams.DebuffDamage);
         	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTags.Debuff_Duration, DamageEffectParams.DebuffDuration);
         	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTags.Debuff_Frequency, DamageEffectParams.DebuffFrequency);
-        
-        	DamageEffectParams.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
+		
+			DamageEffectParams.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
 	}
 
 	return EffectContextHandle;
@@ -263,7 +311,7 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
 
 
 
-void UAuraAbilitySystemLibrary::SetIsSuccessfulDebuff(UPARAM(ref) FGameplayEffectContextHandle EffectContextHandle, bool bInIsSuccessfulDebuff, float InDebuffDamage, float InDebuffDuration, float InDebuffFrequency, const FGameplayTag& InDamageType)
+void UAuraAbilitySystemLibrary::SetIsSuccessfulDebuff(FGameplayEffectContextHandle EffectContextHandle, bool bInIsSuccessfulDebuff, float InDebuffDamage, float InDebuffDuration, float InDebuffFrequency, const FGameplayTag& InDamageType)
 {
 	if (FAuraGameplayEffectContext* AuraEffectContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
 		
@@ -326,7 +374,7 @@ FVector UAuraAbilitySystemLibrary::GetDeathImpulse(const FGameplayEffectContextH
 	return FVector::ZeroVector;
 }
 
-void UAuraAbilitySystemLibrary::SetDeathImpulse(UPARAM(ref)FGameplayEffectContextHandle EffectContextHandle, const FVector& InDeathImpulse)
+void UAuraAbilitySystemLibrary::SetDeathImpulse(FGameplayEffectContextHandle EffectContextHandle, const FVector& InDeathImpulse)
 {
 	if (FAuraGameplayEffectContext* AuraEffectContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
 
@@ -336,7 +384,7 @@ void UAuraAbilitySystemLibrary::SetDeathImpulse(UPARAM(ref)FGameplayEffectContex
 
 }
 
-void UAuraAbilitySystemLibrary::SetDeathImpulseMagnitude(UPARAM(ref)FGameplayEffectContextHandle EffectContextHandle, float InDeathImpulseMagnitude)
+void UAuraAbilitySystemLibrary::SetDeathImpulseMagnitude(FGameplayEffectContextHandle EffectContextHandle, float InDeathImpulseMagnitude)
 {
 	if (FAuraGameplayEffectContext* AuraEffectContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
 
@@ -410,7 +458,7 @@ bool UAuraAbilitySystemLibrary::IsSuccessfulKnockback(const FGameplayEffectConte
 	return false;
 }
 
-void UAuraAbilitySystemLibrary::SetKnockback(UPARAM(ref)FGameplayEffectContextHandle EffectContextHandle, const FVector& InKnockback)
+void UAuraAbilitySystemLibrary::SetKnockback(FGameplayEffectContextHandle EffectContextHandle, const FVector& InKnockback)
 {
 	if (FAuraGameplayEffectContext* AuraEffectContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
 
@@ -453,7 +501,6 @@ TArray<FRotator> UAuraAbilitySystemLibrary::EvenlySpacedRotators(const FVector& 
 	TArray<FRotator> Rotators;
 
 	const FVector LeftOfSpread = Foward.RotateAngleAxis(-Spread / 2, Axis);
-	const FVector RightOfSpread = Foward.RotateAngleAxis(Spread / 2, Axis);
 
 	//NumProjectiles = FMath::Min(MaxNumProjectiles, GetAbilityLevel());
 

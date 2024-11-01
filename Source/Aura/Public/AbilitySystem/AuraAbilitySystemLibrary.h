@@ -166,4 +166,22 @@ public:
 	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|GameplayMechanics")
 	static bool IsNotFriend(AActor* FirstActor, AActor* SecondActor);
 
+	/*
+	 * Damage Effect Params
+	 */
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|GameplayMechanics")
+	static void SetIsRadialDamageEffectParams(UPARAM(ref) FDamageEffectParams& ExplosionEffectParams, bool bInIsRadialDamage,  float RadialDamageInnerRadius, float RadialDamageOuterRadius, FVector InRadialDamageOrigin);
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|GameplayMechanics")
+	static void SetTargetDamageEffectParamsASC(UPARAM(ref) FDamageEffectParams& ExplosionEffectParams, UAbilitySystemComponent* InTargetASC);
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|GameplayMechanics")
+	static void SetKnockbackParams(UPARAM(ref)FDamageEffectParams& DamageEffectParams, FVector KnockbackDirection, float InKnockbackChance = 100.f, float Magnitude = 0.f);
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|GameplayMechanics")
+	static void SetDeathImpulseDirection(UPARAM(ref)FDamageEffectParams& DamageEffectParams, FVector ImpulseDirection, float Magnitude = 0.f);
+
+
+	
 };

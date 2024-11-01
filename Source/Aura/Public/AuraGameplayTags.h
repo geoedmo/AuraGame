@@ -68,6 +68,7 @@ public:
 	FGameplayTag Abilities_Fire_FireBolt;
 	FGameplayTag Abilities_Lightning_Electrocute;
 	FGameplayTag Abilities_Arcane_ArcaneShards;
+	FGameplayTag Abilities_Fire_FireBlast;
 
 	FGameplayTag Abilities_HitReact;
 
@@ -87,6 +88,7 @@ public:
 
 	/** Cooldowns **/
 	FGameplayTag Cooldowns_Fire_FireBolt;
+	FGameplayTag Cooldowns_Fire_FireBlast;
 	FGameplayTag Cooldowns_Lightning_Electrocute;
 	FGameplayTag Cooldowns_Arcane_ArcaneShards;
 
@@ -140,6 +142,9 @@ public:
 
 	/* Gameplay Effects */
 	FGameplayTag Effects_HitReact;
+
+	/* Gameplay Cues*/
+	FGameplayTag GameplayCue_FireBlast;
 
 private:
 	static FAuraGameplayTags GameplayTags;
