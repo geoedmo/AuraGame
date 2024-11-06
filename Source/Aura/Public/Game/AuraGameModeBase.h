@@ -31,9 +31,26 @@ public:
 	TObjectPtr<UAbilityInfo> AbilityInfo;
 
 	void SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex);
+	
+	static void DeleteSlot(const FString& SlotName, int32 SlotIndex);
+	
+	void TravelToMap(UMVVM_LoadSlot* Slot);
+	
+	UPROPERTY(EditDefaultsOnly)
+	FString DefaultMapName;
+	
+	UPROPERTY(EditDefaultsOnly)
+	TSoftObjectPtr<UWorld> DefaultMap;
 
+	UPROPERTY(EditDefaultsOnly)
+	TMap<FString, TSoftObjectPtr<UWorld>> GameMaps;
+	
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<USaveGame> LoadScreenSaveGameClass;
 
 	ULoadMenuSaveObject* GetSaveSlotData(const FString& SlotName, int32 SlotIndex) const;
+
+protected:
+	virtual void BeginPlay() override;
+	
 };

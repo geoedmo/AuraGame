@@ -14,14 +14,17 @@ void UMVVMLoadMenu::InitializeLoadSlots()
 	
 	LoadSlot_0 = NewObject<UMVVM_LoadSlot>(this, LoadSlotViewModelClass);
 	LoadSlot_0->SetLoadSlotName(FString("LoadSlot_0"));
+	LoadSlot_0->SetSlotIndex(0);
 	LoadSlots.Add(0, LoadSlot_0);
 	
 	LoadSlot_1 = NewObject<UMVVM_LoadSlot>(this, LoadSlotViewModelClass);
 	LoadSlot_1->SetLoadSlotName(FString("LoadSlot_1"));
+	LoadSlot_0->SetSlotIndex(1);
 	LoadSlots.Add(1, LoadSlot_1);
 	
 	LoadSlot_2 = NewObject<UMVVM_LoadSlot>(this, LoadSlotViewModelClass);
 	LoadSlot_2->SetLoadSlotName(FString("LoadSlot_2"));
+	LoadSlot_0->SetSlotIndex(2);
 	LoadSlots.Add(2, LoadSlot_2);
 	
 }
@@ -35,6 +38,7 @@ void UMVVMLoadMenu::NewSlotButtonPressed(int32 Slot, const FString& EnteredName)
 {
 	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
 
+	LoadSlots[Slot]->SetMapName(AuraGameMode->DefaultMapName);
 	LoadSlots[Slot]->SetPlayerName(EnteredName);
 	LoadSlots[Slot]->SlotStatus = Taken;
 	
@@ -62,6 +66,30 @@ void UMVVMLoadMenu::SelectSlotButtonPressed(int32 Slot)
 			LoadSlot.Value->SlotSelectButtonEnabled.Broadcast(true);
 		}
 	}
+
+	SelectedSlot = LoadSlots[Slot];
+}
+
+void UMVVMLoadMenu::DeleteButtonPressed()
+{
+	if (IsValid(SelectedSlot))
+	{
+		AAuraGameModeBase::DeleteSlot(SelectedSlot->GetLoadSlotName(), SelectedSlot->GetSlotIndex());
+		SelectedSlot->SlotStatus = Vacant;
+		SelectedSlot->InitializeSlot();
+		SelectedSlot->SlotSelectButtonEnabled.Broadcast(true);
+	}
+
+}
+
+void UMVVMLoadMenu::PlayButtonPressed()
+{
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (IsValid(SelectedSlot))
+	{
+		AuraGameMode->TravelToMap(SelectedSlot);
+	}
+	
 }
 
 void UMVVMLoadMenu::LoadData()
@@ -74,10 +102,12 @@ void UMVVMLoadMenu::LoadData()
 		ULoadMenuSaveObject* SaveObject = AuraGameMode->GetSaveSlotData(LoadSlot.Value->GetLoadSlotName(), LoadSlot.Key);
 
 		const FString PlayerName = SaveObject->PlayerName;
+		const FString MapName = SaveObject->MapName;
 		TEnumAsByte<ESaveSlotStatus> SaveSlotStatus = SaveObject->SaveSlotStatus;
 
 		LoadSlot.Value->SlotStatus = SaveSlotStatus;
 		LoadSlot.Value->SetPlayerName(PlayerName);
+		LoadSlot.Value->SetMapName(MapName);
 		LoadSlot.Value->InitializeSlot();
 		
 	}

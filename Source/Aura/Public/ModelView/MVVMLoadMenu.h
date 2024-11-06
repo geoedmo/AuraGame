@@ -40,7 +40,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SelectSlotButtonPressed(int32 Slot);
+	
+	UFUNCTION(BlueprintCallable)
+	void DeleteButtonPressed();
 
+	UFUNCTION(BlueprintCallable)
+	void PlayButtonPressed();
+	
 	void LoadData();
 
 	/* Field Notifies */
@@ -49,6 +55,7 @@ public:
 	FString GetLoadMenuName() const { return LoadMenuName; }
 	
 private:
+
 	UPROPERTY()
 	TMap<int32, UMVVM_LoadSlot*> LoadSlots;
 	
@@ -61,6 +68,9 @@ private:
 	UPROPERTY()
 	TObjectPtr<UMVVM_LoadSlot> LoadSlot_2;
 	
+	UPROPERTY()
+	TObjectPtr<UMVVM_LoadSlot> SelectedSlot;
+    	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta = (AllowPrivateAccess = true));
 	FString LoadMenuName;
 };
