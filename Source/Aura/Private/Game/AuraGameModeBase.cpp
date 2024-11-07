@@ -4,7 +4,9 @@
 #include "Game/AuraGameModeBase.h"
 
 #include "CookOnTheSide/CookOnTheFlyServer.h"
+#include "Game/AuraGameInstance.h"
 #include "Game/LoadMenuSaveObject.h"
+#include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "ModelView/MVVM_LoadSlot.h"
 
@@ -21,6 +23,7 @@ void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex)
 	LoadMenuSaveObject->PlayerName = LoadSlot->GetPlayerName();
 	LoadMenuSaveObject->MapName = LoadSlot->GetMapName();
 	LoadMenuSaveObject->SaveSlotStatus = Taken;
+	LoadMenuSaveObject->PlayerStartTag = LoadSlot->PlayerStartTag;
 	
 	UGameplayStatics::SaveGameToSlot(LoadMenuSaveObject, LoadSlot->GetLoadSlotName(), SlotIndex);
 
@@ -42,6 +45,27 @@ void AAuraGameModeBase::TravelToMap(UMVVM_LoadSlot* Slot)
 	UGameplayStatics::OpenLevelBySoftObjectPtr(Slot, GameMaps.FindChecked(Slot->GetMapName()));
 }
 
+ULoadMenuSaveObject* AAuraGameModeBase::RetrieveInGameSaveData()
+{
+	
+	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(GetGameInstance());
+
+	const FString InGameLoadSlotName = AuraGameInstance->LoadSlotName;
+	const int32 InGameLoadSlotIndex = AuraGameInstance->LoadSlotIndex;
+	
+	return GetSaveSlotData(InGameLoadSlotName, InGameLoadSlotIndex);
+}
+
+void AAuraGameModeBase::SaveInGameProgressData(ULoadMenuSaveObject* SaveObject)
+{
+	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(GetGameInstance());
+	const FString InGameLoadSlotName = AuraGameInstance->LoadSlotName;
+	const int32 InGameLoadSlotIndex = AuraGameInstance->LoadSlotIndex;
+	AuraGameInstance->PlayerStartTag = SaveObject->PlayerStartTag;
+
+	UGameplayStatics::SaveGameToSlot(SaveObject, InGameLoadSlotName, InGameLoadSlotIndex);
+}
+
 ULoadMenuSaveObject* AAuraGameModeBase::GetSaveSlotData(const FString& SlotName, int32 SlotIndex) const
 {
 
@@ -57,6 +81,32 @@ ULoadMenuSaveObject* AAuraGameModeBase::GetSaveSlotData(const FString& SlotName,
 	ULoadMenuSaveObject* LoadMenuSaveGame = Cast<ULoadMenuSaveObject>(SaveGameObject);
 	return LoadMenuSaveGame;
 
+	
+}
+
+AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
+{
+	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(GetGameInstance());
+	
+	TArray<AActor*> Actors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), Actors);
+	if (Actors.Num() > 0)
+	{
+		AActor* SelectedActor = Actors[0];
+		for (AActor* Actor : Actors)
+		{
+			if (APlayerStart* PlayerStart = Cast<APlayerStart>(Actor))
+			{
+				if (PlayerStart->PlayerStartTag == AuraGameInstance->PlayerStartTag)
+				{
+					SelectedActor = PlayerStart;
+					break;
+				}
+			}
+		}
+		return SelectedActor;
+	}
+	return nullptr;
 	
 }
 

@@ -22,7 +22,10 @@ public:
 	
 protected:
 	UPROPERTY(EditAnywhere)
-	int32 NumFireBalls = 1;
+	int32 StartNumFireBalls = 5;
+
+	UPROPERTY(EditDefaultsOnly)
+	int32 MaxNumFireBalls = 11;
 
 	UPROPERTY(EditAnywhere)
 	float ProjectileSpread = 190.f;

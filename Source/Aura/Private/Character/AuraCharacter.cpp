@@ -15,6 +15,9 @@
 #include "Components/WidgetComponent.h"
 #include "AbilitySystem/Components/DebuffNiagaraComponent.h"
 #include "AuraGameplayTags.h"
+#include "Game/AuraGameInstance.h"
+#include "Game/AuraGameModeBase.h"
+#include "Game/LoadMenuSaveObject.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/WidgetController/AuraWidgetController.h"
 
@@ -189,6 +192,37 @@ void AAuraCharacter::HideMagicCircle_Implementation()
 		AuraPlayerController->HideMagicCircle();
 		AuraPlayerController->bShowMouseCursor = true;
 	}
+}
+
+void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
+{
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	
+	if (AuraGameMode)
+	{
+		ULoadMenuSaveObject* SaveData = AuraGameMode->RetrieveInGameSaveData();
+		if (SaveData == nullptr) return;
+
+		SaveData->PlayerStartTag = CheckpointTag;
+
+		AuraPlayerState = Cast<AAuraPlayerState>(GetPlayerState());
+
+		if (AuraPlayerState)
+		{
+			SaveData->PlayerLevel = AuraPlayerState->GetPlayerLevel();
+			SaveData->XP = AuraPlayerState->GetPlayerXP();
+			SaveData->AttributePoints = AuraPlayerState->GetPlayerAttributePoints();
+			SaveData->SpellPoints = AuraPlayerState->GetPlayerSpellPoints();
+		}
+		
+		SaveData->Strength = UAuraAttributeSet::GetStrengthAttribute().GetNumericValue(GetAttributeSet());
+		SaveData->Intellect = UAuraAttributeSet::GetIntelligenceAttribute().GetNumericValue(GetAttributeSet());
+		SaveData->Vigor = UAuraAttributeSet::GetVigorAttribute().GetNumericValue(GetAttributeSet());
+		SaveData->Resilience = UAuraAttributeSet::GetResilienceAttribute().GetNumericValue(GetAttributeSet());
+		
+		AuraGameMode->SaveInGameProgressData(SaveData);
+	}
+	
 }
 
 void AAuraCharacter::StunTagChanged(const FGameplayTag StunTag, int32 NewCount)

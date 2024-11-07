@@ -11,7 +11,12 @@ TArray<AAuraFireBall*> UAuraFireBlastAbility::SpawnFireBalls()
 	TArray<AAuraFireBall*> FireBalls;
 	const FVector Forward = GetAvatarActorFromActorInfo()->GetActorForwardVector();
 	const FVector Location = GetAvatarActorFromActorInfo()->GetActorLocation();
-	TArray<FRotator> Rotators = UAuraAbilitySystemLibrary::EvenlySpacedRotators(Forward, FVector::UpVector, 360.f, NumFireBalls);
+
+	// Make sure we're increasing the fireball count according to level.
+	
+	int32 EffectiveNumFireBalls = FMath::Min(MaxNumFireBalls, GetAbilityLevel() + StartNumFireBalls);
+	
+	TArray<FRotator> Rotators = UAuraAbilitySystemLibrary::EvenlySpacedRotators(Forward, FVector::UpVector, ProjectileSpread, EffectiveNumFireBalls);
 
 	for (const FRotator& Rotator : Rotators)
 	{

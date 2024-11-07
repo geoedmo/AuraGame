@@ -506,7 +506,7 @@ TArray<FRotator> UAuraAbilitySystemLibrary::EvenlySpacedRotators(const FVector& 
 
 	if (NumRotators > 1) {
 
-		const float DeltaSpread = Spread / (NumRotators - 1);
+		const float DeltaSpread = Spread / NumRotators;
 
 		for (int32 i = 0; i < NumRotators; i++) {
 

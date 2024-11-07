@@ -28,6 +28,9 @@ public:
 
 	UPROPERTY()
 	TEnumAsByte<ESaveSlotStatus> SlotStatus;
+
+	UPROPERTY()
+	FName PlayerStartTag;
 	
 	void InitializeSlot();
 	

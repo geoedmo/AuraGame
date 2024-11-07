@@ -49,6 +49,7 @@ public:
 	virtual int32 GetSpellPoints_Implementation() override;
 	virtual void ShowMagicCircle_Implementation(UMaterialInterface* DecalMaterial = nullptr) override;
 	virtual void HideMagicCircle_Implementation() override;
+	virtual void SaveProgress_Implementation(const FName& CheckpointTag) override;
 	/* </PlayerInterface> */
 
 	virtual void StunTagChanged(const FGameplayTag StunTag, int32 NewCount)	override;
