@@ -12,6 +12,7 @@
  */
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnChangePlayerStatChanged, int32 /*Stat Value*/);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnLevelChanged, int32 /* level*/, bool /*first time load in*/);
 
 class UAbilitySystemComponent;
 class UAttributeSet;
@@ -33,7 +34,7 @@ public:
 	/* </AbilitySystemInterface> */
 
 	FOnChangePlayerStatChanged OnXPChangedDelegate;
-	FOnChangePlayerStatChanged OnLevelChangedDelegate;
+	FOnLevelChanged OnLevelChangedDelegate;
 	FOnChangePlayerStatChanged OnAttributePointsChangedDelegate;
 	FOnChangePlayerStatChanged OnSpellPointsChangedDelegate;
 
@@ -46,8 +47,6 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
-
-
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -89,6 +88,8 @@ public:
 
 	void SetLevel(int32 InLevel);
 	void SetXP(int32 InXP);
+	void SetAttributePoints(int32 InAttributePoints);
+	void SetSpellPoints(int32 InSpellPoints);
 
 	void SetInMenus(bool MenuStatus);
 

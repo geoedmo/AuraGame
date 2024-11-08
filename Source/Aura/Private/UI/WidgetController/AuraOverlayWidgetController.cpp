@@ -32,9 +32,9 @@ void UAuraOverlayWidgetController::BindCallbacksToDependencies()
 	UAuraAbilitySystemComponent* AuraASC = GetAuraASC();
 
 	AuraPlayerState->OnLevelChangedDelegate.AddLambda(
-		[this](int32 NewLevel) {
+		[this](int32 NewLevel, bool bLevelUp) {
 
-			OnPlayerLevelChangedDelegate.Broadcast(NewLevel);
+			OnPlayerLevelChangedDelegate.Broadcast(NewLevel, bLevelUp);
 
 		}
 	);

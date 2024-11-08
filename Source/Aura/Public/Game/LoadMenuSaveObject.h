@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Abilities/GameplayAbility.h"
 #include "GameFramework/SaveGame.h"
 #include "LoadMenuSaveObject.generated.h"
 
@@ -16,6 +17,30 @@ enum ESaveSlotStatus
 	Vacant,
 	EnterName,
 	Taken
+};
+
+USTRUCT(BlueprintType)
+struct FSavedAbility
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ClassDefaults")
+	TSubclassOf<UGameplayAbility> GameplayAbility;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FGameplayTag AbilityTag = FGameplayTag();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FGameplayTag AbilityStatus = FGameplayTag();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FGameplayTag AbilitySlot = FGameplayTag();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FGameplayTag AbilityType = FGameplayTag();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	int32 AbilityLevel = 1;
 };
 
 UCLASS()
@@ -42,10 +67,13 @@ public:
 	UPROPERTY()
 	TEnumAsByte<ESaveSlotStatus> SaveSlotStatus = Vacant;
 
+	UPROPERTY()
+	bool bFirstTimeLoadIn = true;
+	
 	/* Player */
 
 	UPROPERTY()
-	int32 PlayerLevel = 0;
+	int32 PlayerLevel = 1;
 
 	UPROPERTY()
 	int32 XP = 0;
@@ -62,12 +90,16 @@ public:
 	float Strength = 0.f;
 
 	UPROPERTY()
-	float Intellect = 0.f;
+	float Intelligence = 0.f;
 
 	UPROPERTY()
 	float Vigor = 0.f;
 
 	UPROPERTY()
 	float Resilience = 0.f;
+
+	/* Abilities */
+
+	TArray<FSavedAbility> SavedAbilities;
 	
 };

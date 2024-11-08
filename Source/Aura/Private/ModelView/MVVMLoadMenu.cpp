@@ -42,6 +42,7 @@ void UMVVMLoadMenu::NewSlotButtonPressed(int32 Slot, const FString& EnteredName)
 	LoadSlots[Slot]->SetMapName(AuraGameMode->DefaultMapName);
 	LoadSlots[Slot]->SetPlayerName(EnteredName);
 	LoadSlots[Slot]->SlotStatus = Taken;
+	LoadSlots[Slot]->SetPlayerLevel(1);
 	LoadSlots[Slot]->PlayerStartTag = AuraGameMode->DefaultPlayerStartTag;
 	
 	AuraGameMode->SaveSlotData(LoadSlots[Slot], Slot);
@@ -119,8 +120,9 @@ void UMVVMLoadMenu::LoadData()
 
 		LoadSlot.Value->SlotStatus = SaveSlotStatus;
 		LoadSlot.Value->SetPlayerName(PlayerName);
+		LoadSlot.Value->SetPlayerLevel(SaveObject->PlayerLevel);
 		LoadSlot.Value->SetMapName(MapName);
-		LoadSlot.Value->PlayerStartTag = SaveObject->PlayerStartTag;
+		LoadSlot.Value->PlayerStartTag = SaveObject->PlayerStartTag; // Player checkpoint Load in spot
 		LoadSlot.Value->InitializeSlot();
 		
 	}
