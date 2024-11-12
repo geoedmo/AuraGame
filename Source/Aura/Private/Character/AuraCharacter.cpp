@@ -71,6 +71,11 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 	InitAbilityActorInfo();
 	LoadProgress();
 	
+	if (AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this)))
+	{
+		AuraGameMode->LoadWorldState(GetWorld());
+	}
+	
 }
 
 void AAuraCharacter::LoadProgress()
@@ -89,6 +94,12 @@ void AAuraCharacter::LoadProgress()
 			AddCharacterAbilities();
 		} else
 		{
+			
+			if (UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent))
+			{
+				AuraASC->AddCharacterAbilitiesFromSaveData(SaveData);	
+			}
+			
 			if (AuraPlayerState)
 			{
 				AuraPlayerState = Cast<AAuraPlayerState>(GetPlayerState());
@@ -272,8 +283,9 @@ void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 			SavedAbility.AbilityType = Info.AbilityType;
 
 			SaveData->SavedAbilities.AddUnique(SavedAbility);
-
+			
 		});
+		
 		AuraASC->ForEachAbility(SaveAbilityDelegate);
 		
 		AuraGameMode->SaveInGameProgressData(SaveData);

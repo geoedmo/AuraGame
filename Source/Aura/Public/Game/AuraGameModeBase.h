@@ -23,23 +23,12 @@ class AURA_API AAuraGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 
 public:
-
 	UPROPERTY(EditAnywhere, Category = "Character Class Info")
 	TObjectPtr<UCharacterClassInfo> CharacterClassInfo;
 
 	UPROPERTY(EditAnywhere, Category = "Character Class Info")
 	TObjectPtr<UAbilityInfo> AbilityInfo;
 
-	void SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex);
-	
-	static void DeleteSlot(const FString& SlotName, int32 SlotIndex);
-	
-	void TravelToMap(UMVVM_LoadSlot* Slot);
-
-	ULoadMenuSaveObject* RetrieveInGameSaveData();
-
-	void SaveInGameProgressData(ULoadMenuSaveObject* SaveObject);
-	
 	UPROPERTY(EditDefaultsOnly)
 	FString DefaultMapName;
 	
@@ -54,10 +43,17 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<USaveGame> LoadScreenSaveGameClass;
-
-	ULoadMenuSaveObject* GetSaveSlotData(const FString& SlotName, int32 SlotIndex) const;
 	
+	void SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex);
+	static void DeleteSlot(const FString& SlotName, int32 SlotIndex);
+	void TravelToMap(UMVVM_LoadSlot* Slot);
+	ULoadMenuSaveObject* RetrieveInGameSaveData();
+	void SaveInGameProgressData(ULoadMenuSaveObject* SaveObject);
+	ULoadMenuSaveObject* GetSaveSlotData(const FString& SlotName, int32 SlotIndex) const;
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+
+	void SaveWorldState(UWorld* World) const;
+	void LoadWorldState(UWorld* World) const;
 
 protected:
 	virtual void BeginPlay() override;

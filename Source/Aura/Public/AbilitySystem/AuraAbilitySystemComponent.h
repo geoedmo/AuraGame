@@ -7,6 +7,7 @@
 #include "AuraAbilitySystemComponent.generated.h"
 
 
+class ULoadMenuSaveObject;
 DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContainer& /* AssetTags */);
 DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven);
 DECLARE_DELEGATE_OneParam(FForEachAbility, const FGameplayAbilitySpec&);
@@ -35,7 +36,8 @@ public:
 	FAbilityEquipped AbilityEquippedDelegate;
 	FOnPassiveAbilityDeactivate PassiveAbilityDeactivateDelegate;
 	FActivatePassiveEffect ActivatePassiveEffect;
-	
+
+	void AddCharacterAbilitiesFromSaveData(ULoadMenuSaveObject* SaveData);
 	void AddCharacterAbilities(TArray<TSubclassOf<UGameplayAbility>> StartupAbilities);
 	void AddCharacterPassiveAbilities(TArray<TSubclassOf<UGameplayAbility>> StartupPassiveAbilities);
 	void UpgradeAttributes(const FGameplayTag& AttibuteTag);
