@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Interaction/EnemyInteraction.h"
 #include "Character/AuraCharacterBase.h"
+#include "Interaction/HighlightInterface.h"
 #include "UI/WidgetController/AuraOverlayWidgetController.h"
 #include "AuraEnemy.generated.h"
 
@@ -19,7 +20,7 @@ class UBehaviorTree;
 class AAuraAIController;
 
 UCLASS()
-class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInteraction
+class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInteraction, public IHighlightInterface
 {
 	GENERATED_BODY()
 	
@@ -54,8 +55,12 @@ public:
 	/* <EnemyInteraction> */
 
 	// ** Overrides ** //
-	virtual void HighlightActor() override;
-	virtual void UnhighlightActor() override;
+
+	/* Highlight Interface */
+	virtual void HighlightActor_Implementation() override;
+	virtual void UnhighlightActor_Implementation() override;
+	/* /Highlight Interface */
+	
 	virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override;
 	virtual AActor* GetCombatTarget_Implementation() const override;
 

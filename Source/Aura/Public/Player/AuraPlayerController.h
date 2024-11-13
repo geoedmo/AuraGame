@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Interaction/HighlightInterface.h"
 #include "AuraPlayerController.generated.h"
 
 
@@ -21,15 +22,21 @@ class UNiagaraSystem;
 class UNiagaraComponent;
 class AMagicCircle;
 
+enum class ETargetingStatus : uint8
+{
+	TargetingEnemy,
+	TargetingNonEnemy,
+	NotTargeting
+};
+
 UCLASS()
-class AURA_API AAuraPlayerController : public APlayerController
+class AURA_API AAuraPlayerController : public APlayerController, public IHighlightInterface
 {
 	GENERATED_BODY()
 	
 public:
 	AAuraPlayerController();
-
-
+	
 	virtual void PlayerTick(float DeltaTime) override;
 
 	UFUNCTION(Client, Reliable)
@@ -67,7 +74,9 @@ private:
 	float FollowTime = 0.f;
 	float ShortPressThreshold = 0.5f;
 	bool bAutoRunning = false;
-	bool bTargeting = false;
+
+	ETargetingStatus TargetingStatus = ETargetingStatus::NotTargeting;
+	
 	FHitResult CursorHit;
 	bool bShiftKeyDown;
 
@@ -80,6 +89,7 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputMappingContext> AuraContext;
+	
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> MoveAction;
 	UPROPERTY(EditAnywhere, Category = Input)
@@ -97,8 +107,11 @@ private:
 	void ShiftReleased() { bShiftKeyDown = false; };
 	void CursorTrace();
 
-	TScriptInterface<IEnemyInteraction> LastActor;
-	TScriptInterface <IEnemyInteraction> ThisActor;
+	TObjectPtr<AActor> LastActor;
+	TObjectPtr<AActor> ThisActor;
+
+	static void HighlightActor(AActor* InActor);
+	static void UnHighlightActor(AActor* InActor);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UAuraInputConfig> AuraInputConfig;

@@ -176,20 +176,23 @@ void AAuraPlayerController::CursorTrace()
 	
 	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_CursorTrace))
 	{
-		if (LastActor) LastActor->UnhighlightActor();
-
+		UnHighlightActor(LastActor);
+		UnHighlightActor(ThisActor);
+		
+	
 		LastActor = nullptr;
 		ThisActor = nullptr;
 		return;
 	}
 	
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
-	
 	if (!CursorHit.bBlockingHit) return;
 	
 	if (CursorHit.GetActor()->Implements<UCombatInterface>() && ICombatInterface::Execute_IsDead(CursorHit.GetActor()) && !MagicCircle) {
 		
-		if (LastActor) LastActor->UnhighlightActor();
+		UnHighlightActor(LastActor);
+		UnHighlightActor(ThisActor);
+		
 		LastActor = nullptr;
 		ThisActor = nullptr;
 		return;
@@ -197,15 +200,42 @@ void AAuraPlayerController::CursorTrace()
 	
 
 	LastActor = ThisActor; // this is being done before, so logically first
-	ThisActor = CursorHit.GetActor(); // this is sort of the "current" actor being highlighted
 
+	if(IsValid(CursorHit.GetActor()) && CursorHit.GetActor()->Implements<UHighlightInterface>())
+	{
+		ThisActor = CursorHit.GetActor();
+	}
+	else
+	{
+		ThisActor = nullptr;
+	}
+
+	
 	if (LastActor != ThisActor) {
 
-		if (LastActor) LastActor->UnhighlightActor();
-		if (ThisActor) ThisActor->HighlightActor();
+		UnHighlightActor(LastActor);
+		HighlightActor(ThisActor);
+		
 	}
 
 }
+
+void AAuraPlayerController::HighlightActor(AActor* InActor)
+{
+	if (IsValid(InActor) && InActor->Implements<UHighlightInterface>())
+	{
+		IHighlightInterface::Execute_HighlightActor(InActor);
+	}
+}
+
+void AAuraPlayerController::UnHighlightActor(AActor* InActor)
+{
+	if (IsValid(InActor) && InActor->Implements<UHighlightInterface>())
+	{
+		IHighlightInterface::Execute_UnhighlightActor(InActor);
+	}
+}
+
 /*
 	* Line Trace from cursor. There are several scenerios:
 	* A. LastActor is null && ThisActor is null
@@ -269,8 +299,18 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
-	bTargeting = ThisActor ? true : false; // Turnary Operator
-	bAutoRunning = false;
+		
+		if (IsValid(ThisActor))
+		{
+			TargetingStatus = ThisActor->Implements<UEnemyInteraction>() ? ETargetingStatus::TargetingEnemy : ETargetingStatus::TargetingNonEnemy;
+		}
+		else
+		{
+			TargetingStatus = ETargetingStatus::NotTargeting;
+		}
+		
+		bAutoRunning = false;
+
 	}
 
 	if (GetASC()) GetASC()->AbilityInputTagPressed(InputTag);
@@ -296,7 +336,7 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 		GetASC()->AbilityInputTagReleased(InputTag);
 	}
 
-	if (!bTargeting && !bShiftKeyDown)
+	if (TargetingStatus != ETargetingStatus::TargetingEnemy && !bShiftKeyDown)
 	{
 		bool bIsCurrentlyInMenus = AuraPlayerState->GetMenuStatus();
 		if (bIsCurrentlyInMenus) return;
@@ -305,12 +345,15 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 		if (FollowTime <= ShortPressThreshold && ControlledPawn) {
 
 			//Niagara System
-			if (!GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_CursorTrace))
+
+			if (IsValid(ThisActor) && ThisActor->Implements<UHighlightInterface>())
+			{
+				IHighlightInterface::Execute_SetMoveToLocation(ThisActor, CachedDestination);
+			}
+			else if (!GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_CursorTrace))
 			{ 
 			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ClickNiagara, CursorHit.ImpactPoint);
 			}
-
-
 			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
 			{
 				Spline->ClearSplinePoints();
@@ -329,7 +372,7 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 		}
 
 		FollowTime = 0.f;
-		bTargeting = false;
+		TargetingStatus = ETargetingStatus::NotTargeting;
 		
 	}
 
@@ -351,7 +394,7 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 
 	// If we are holding LMB down and Targeting
 
-	if (bTargeting || bShiftKeyDown)
+	if (TargetingStatus == ETargetingStatus::TargetingEnemy || bShiftKeyDown)
 	{
 		if (GetASC())
 		{
