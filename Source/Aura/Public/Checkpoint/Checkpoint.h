@@ -18,6 +18,7 @@ UCLASS()
 class AURA_API ACheckpoint : public APlayerStart, public ISaveInterface, public IHighlightInterface
 {
 	GENERATED_BODY()
+	
 public:
 	ACheckpoint(const FObjectInitializer& ObjectInitializer);
 
@@ -36,6 +37,12 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, SaveGame)
 	bool bReached = false;
+
+	UPROPERTY(EditAnywhere)
+	bool bBindOverlapCallback = true;
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void CheckPointReached(UMaterialInstanceDynamic* DynamicMaterialInstance);
 	
 protected:
 	
@@ -43,10 +50,8 @@ protected:
 	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	virtual void BeginPlay() override;
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void CheckPointReached(UMaterialInstanceDynamic* DynamicMaterialInstance);
-
+	
+	UFUNCTION(BlueprintCallable)
 	void HandleGlowEffects();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -54,11 +59,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<USceneComponent> MoveToComponent;
-	
-private:
-	
+
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<USphereComponent> Sphere;
-	
+    TObjectPtr<USphereComponent> Sphere;
 	
 };

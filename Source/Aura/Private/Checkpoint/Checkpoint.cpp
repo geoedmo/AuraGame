@@ -34,14 +34,17 @@ ACheckpoint::ACheckpoint(const FObjectInitializer& ObjectInitializer)
 
 void ACheckpoint::HighlightActor_Implementation()
 {
-	CheckpointMesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_TAN);
-	CheckpointMesh->SetRenderCustomDepth(true);
+	if (!bReached)
+	{
+		CheckpointMesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_TAN);
+        CheckpointMesh->SetRenderCustomDepth(true);
+	}
 
 }
 
 void ACheckpoint::UnhighlightActor_Implementation()
 {
-	CheckpointMesh->SetRenderCustomDepth(true);
+	CheckpointMesh->SetRenderCustomDepth(false);
 }
 
 void ACheckpoint::SetMoveToLocation_Implementation(FVector& OutLocation)
@@ -53,7 +56,11 @@ void ACheckpoint::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ACheckpoint::OnSphereOverlap);
+	if (bBindOverlapCallback)
+	{
+		Sphere->OnComponentBeginOverlap.AddDynamic(this, &ACheckpoint::OnSphereOverlap);
+	}
+		
 }
 
 void ACheckpoint::HandleGlowEffects()
@@ -61,7 +68,6 @@ void ACheckpoint::HandleGlowEffects()
 	Sphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(CheckpointMesh->GetMaterial(0), this);
 	CheckpointMesh->SetMaterial(0, DynamicMaterialInstance);
-
 	CheckPointReached(DynamicMaterialInstance);
 }
 
@@ -87,7 +93,7 @@ void ACheckpoint::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 				FString MapName = World->GetMapName();
 				MapName.RemoveFromStart(World->StreamingLevelsPrefix);
 			
-				AuraGM->SaveWorldState(GetWorld());
+				AuraGM->SaveWorldState(GetWorld(), MapName);
 			}
 			
 		IAuraPlayerInterface::Execute_SaveProgress(OtherActor, PlayerStartTag);

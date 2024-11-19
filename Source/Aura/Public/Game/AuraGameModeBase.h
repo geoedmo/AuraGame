@@ -15,6 +15,7 @@ class USaveGame;
 class UMVVM_LoadSlot;
 class UCharacterClassInfo;
 class UAbilityInfo;
+class ULootTiers;
 
 
 UCLASS()
@@ -29,6 +30,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Character Class Info")
 	TObjectPtr<UAbilityInfo> AbilityInfo;
 
+	UPROPERTY(EditAnywhere, Category = "Loot Tier Info")
+	TObjectPtr<ULootTiers> LootTier;
+	
 	UPROPERTY(EditDefaultsOnly)
 	FString DefaultMapName;
 	
@@ -51,10 +55,13 @@ public:
 	void SaveInGameProgressData(ULoadMenuSaveObject* SaveObject);
 	ULoadMenuSaveObject* GetSaveSlotData(const FString& SlotName, int32 SlotIndex) const;
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
-
-	void SaveWorldState(UWorld* World) const;
+	FString GetMapNameFromMapAssetName(const FString& MapAssetName) const;
+	
+	void SaveWorldState(UWorld* World, const FString& DestinationMapAssetName = FString("")) const;
 	void LoadWorldState(UWorld* World) const;
 
+	void PlayerDied(ACharacter* DeadCharacter);
+	
 protected:
 	virtual void BeginPlay() override;
 	

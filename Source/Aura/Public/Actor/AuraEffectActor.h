@@ -24,6 +24,7 @@ enum EEffectRemovalPolicy
 
 class UAbilitySystemComponent;
 class UGameplayEffect;
+class USoundBase;
 
 UCLASS()
 class AURA_API AAuraEffectActor : public AActor
@@ -34,20 +35,61 @@ public:
 
 	AAuraEffectActor();
 	
-
+	virtual void Tick(float DeltaTime) override;
+	
 protected:
 
 	virtual void BeginPlay() override;
 
 	/** Variables **/
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
+	TObjectPtr<USoundBase> HitGroundImpactSound;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
+	TObjectPtr<USoundBase> SpawnSound;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
+	TObjectPtr<USoundBase> ConsumedSound;
+	
+	UPROPERTY(BlueprintReadWrite)
+	FVector CalculatedLocation;
+
+	UPROPERTY(BlueprintReadWrite)
+	FRotator CalculatedRotation;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Loot Drop Effects")
+	bool bRotates = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Loot Drop Effects")
+	float RotationRate = 45.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Loot Drop Effects")
+	bool bSinusoudalMovement = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup Movement")
+	float SinePeriodConstant = 1.f; 
+
+	UFUNCTION(BlueprintCallable, Category = "Loot Drop Effects")
+	void StartSinusoudalMovement();
+
+	UFUNCTION(BlueprintCallable, Category = "Loot Drop Effects")
+	void StartRotation();
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Loot Drop Effects")
+	float SineAmplitude = 1.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Loot Drop Effects")
+	FVector InitialLocation = FVector();
+	
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
 	bool bDestroyOnEffectApplication = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
 	bool bApplyEffectsToEnemies = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Applied Effects")
 	float ActorLevel;
 
 
@@ -120,6 +162,12 @@ protected:
 private:
 
 
+	
+
+	float RunningTime = 0.f;
+	
+	void ItemMovement(float DeltaTime);
+	
 public:	
 
 

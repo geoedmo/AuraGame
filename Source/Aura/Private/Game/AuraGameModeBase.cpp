@@ -8,6 +8,7 @@
 #include "CookOnTheSide/CookOnTheFlyServer.h"
 #include "Game/AuraGameInstance.h"
 #include "Game/LoadMenuSaveObject.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/PlayerStart.h"
 #include "Interaction/SaveInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -28,6 +29,7 @@ void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex)
 	LoadMenuSaveObject->MapName = LoadSlot->GetMapName();
 	LoadMenuSaveObject->SaveSlotStatus = Taken;
 	LoadMenuSaveObject->PlayerStartTag = LoadSlot->PlayerStartTag;
+	LoadMenuSaveObject->MapAssetName = LoadSlot->MapAssetName;
 	
 	UGameplayStatics::SaveGameToSlot(LoadMenuSaveObject, LoadSlot->GetLoadSlotName(), SlotIndex);
 
@@ -114,7 +116,19 @@ AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 	
 }
 
-void AAuraGameModeBase::SaveWorldState(UWorld* World) const
+FString AAuraGameModeBase::GetMapNameFromMapAssetName(const FString& MapAssetName) const
+{
+	for (auto& Map : GameMaps)
+	{
+		if (Map.Value.ToSoftObjectPath().GetAssetName() == MapAssetName)
+		{
+			return Map.Key;
+		}
+	}
+	return FString();
+}
+
+void AAuraGameModeBase::SaveWorldState(UWorld* World, const FString& DestinationMapAssetName) const
 {
 	
 	FString WorldName = World->GetMapName();
@@ -125,6 +139,13 @@ void AAuraGameModeBase::SaveWorldState(UWorld* World) const
 
 	if (ULoadMenuSaveObject* SaveGame = GetSaveSlotData(AuraGI->LoadSlotName, AuraGI->LoadSlotIndex))
 	{
+
+		if (DestinationMapAssetName != FString(""))
+		{
+			SaveGame->MapAssetName = DestinationMapAssetName;
+			SaveGame->MapName = GetMapNameFromMapAssetName(DestinationMapAssetName);
+			
+		}
 		
 		if (!SaveGame->HasMap(WorldName))
 		{
@@ -212,6 +233,15 @@ void AAuraGameModeBase::LoadWorldState(UWorld* World) const
 			}
 		}
 	}
+}
+
+void AAuraGameModeBase::PlayerDied(ACharacter* DeadCharacter)
+{
+	ULoadMenuSaveObject* SaveGame = RetrieveInGameSaveData();
+
+	if(!IsValid(SaveGame)) return;
+
+	UGameplayStatics::OpenLevel(DeadCharacter, FName(SaveGame->MapAssetName));
 }
 
 void AAuraGameModeBase::BeginPlay()

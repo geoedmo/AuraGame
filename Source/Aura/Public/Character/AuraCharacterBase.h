@@ -117,7 +117,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Combat)
 	TObjectPtr<UNiagaraSystem> BloodEffect;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	bool bDead = false;
 
 	UPROPERTY(EditAnywhere, Category = "Character Class Defaults")

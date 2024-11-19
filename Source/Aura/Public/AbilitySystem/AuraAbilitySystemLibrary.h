@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Data/CharacterClassInfo.h"
+#include "Data/LootTiers.h"
 #include "Game/LoadMenuSaveObject.h"
 
 #include "AuraAbilitySystemLibrary.generated.h"
@@ -33,7 +34,6 @@ public:
 
 	UFUNCTION(Blueprintcallable, Category = "AuraAbilitySystemLibrary|Class Default Information")
 	static void InitializeClassDefaultAttributesFromSaveData(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ULoadMenuSaveObject* SaveGame);
-
 	
 	UFUNCTION(Blueprintcallable, Category = "AuraAbilitySystemLibrary|Class Default Information")
 	static void GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass);
@@ -188,6 +188,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|GameplayMechanics")
 	static void SetDeathImpulseDirection(UPARAM(ref)FDamageEffectParams& DamageEffectParams, FVector ImpulseDirection, float Magnitude = 0.f);
 
-
-	
+	/*
+	 * Loot Tiers
+	 */
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|LootTiers", meta = (DefaultToSelf = "WorldContextObject"))
+	static ULootTiers* GetLootTierInfo (const UObject* WorldContextObject);
 };

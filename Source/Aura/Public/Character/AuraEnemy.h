@@ -30,7 +30,6 @@ public:
 	AAuraEnemy();
 
 	virtual void PossessedBy(AController* NewController) override;
-
 	virtual void Tick(float DeltaTime) override;
 
 
@@ -96,8 +95,16 @@ protected:
 	virtual void InitAbilityActorInfo() override;
 	virtual void InitializeDefaultAttributes() const override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void SpawnLoot();
+
 private:
 
 public:
+
+	void SetLevel(int32 InLevel) { Level = InLevel; }
+	void SetCharacterClass (ECharacterClass InClass) { CharacterClass = InClass; }
+	
 	UWidgetComponent* GetHealthBar_Implementation() { return EnemyHealthBar; }
+	
 };

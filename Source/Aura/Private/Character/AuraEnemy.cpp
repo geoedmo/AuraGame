@@ -69,7 +69,7 @@ void AAuraEnemy::Die(const FVector& DeathImpulse)
 	SetLifeSpan(LifeSpan);
 	if (AuraAIController) AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("Dead"), true);
 	Super::Die(DeathImpulse);
-
+	SpawnLoot();
 }
 
 void AAuraEnemy::FinishSummoning_Implementation()
@@ -80,6 +80,7 @@ void AAuraEnemy::FinishSummoning_Implementation()
 void AAuraEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+	
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 
 	check(AbilitySystemComponent)

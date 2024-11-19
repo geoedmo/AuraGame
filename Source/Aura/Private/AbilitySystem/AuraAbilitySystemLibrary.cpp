@@ -296,6 +296,14 @@ void UAuraAbilitySystemLibrary::SetDeathImpulseDirection(FDamageEffectParams& Da
 	}
 }
 
+ULootTiers* UAuraAbilitySystemLibrary::GetLootTierInfo(const UObject* WorldContextObject)
+{
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if (AuraGameMode == nullptr) return nullptr;
+
+	return AuraGameMode->LootTier;
+}
+
 int32 UAuraAbilitySystemLibrary::GetXPForCharacterClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 Level)
 {
 	UCharacterClassInfo* Info = GetCharacterClassInfo(WorldContextObject);
