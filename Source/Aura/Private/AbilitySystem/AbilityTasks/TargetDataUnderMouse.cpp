@@ -48,6 +48,7 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 
 	APlayerController* PC = Ability->GetCurrentActorInfo()->PlayerController.Get();
 	FHitResult CursorPosition;
+
 	PC->GetHitResultUnderCursor(ECC_Target, false, CursorPosition);
 	
 	FGameplayAbilityTargetData_SingleTargetHit* Data = new FGameplayAbilityTargetData_SingleTargetHit();

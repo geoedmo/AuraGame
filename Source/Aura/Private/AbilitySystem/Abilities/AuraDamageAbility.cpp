@@ -4,7 +4,6 @@
 #include "AbilitySystem/Abilities/AuraDamageAbility.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "AuraGameplayTags.h"
 #include "Interaction/CombatInterface.h"
 
 
@@ -15,8 +14,7 @@ void UAuraDamageAbility::CauseDamage(AActor* TargetActor)
 
 	const float DamageMagnitude = Damage.GetValueAtLevel(GetAbilityLevel());
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageEffectSpecHandle, DamageType, DamageMagnitude);
-
-
+	
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data.Get(), UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
 }
 
@@ -39,6 +37,7 @@ FDamageEffectParams UAuraDamageAbility::MakeDamageEffectParamsFromClassDefaults(
 	Params.DeathImpulseMagnitude = DeathImpulseMagnitude;
 	Params.KnockbackChance = KnockbackChance;
 	Params.KnockbackMagnitude = KnockbackMagnitude;
+	Params.bIsAOEDamage = bIsAOEDamage;
 
 	if (IsValid(Target))
 	{

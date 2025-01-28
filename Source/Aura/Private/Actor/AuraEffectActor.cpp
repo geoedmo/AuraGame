@@ -6,11 +6,10 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 
-
 // Sets default values
 AAuraEffectActor::AAuraEffectActor()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	SetRootComponent(CreateDefaultSubobject<USceneComponent>("SceneRoot"));
 	
@@ -53,12 +52,18 @@ void AAuraEffectActor::StartRotation()
 }
 
 void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass)
-{	
-
+{
+	
+	const bool bInstigatorIsSelf = TargetActor == GetInstigator();
+	
 	const bool bIsEnemy = TargetActor->ActorHasTag(FName("Enemy"));
+	
 	if (bIsEnemy && !bApplyEffectsToEnemies) return;
 
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+
+	if (!bIsEnemy && bDoNotApplyToSelf && bInstigatorIsSelf) return; 
+	
 	if (TargetASC == nullptr) return;
 
 	check(GameplayEffectClass)
@@ -66,6 +71,8 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 	FGameplayEffectContextHandle EffectContextHandle = TargetASC->MakeEffectContext();
 
 	EffectContextHandle.AddSourceObject(this);
+	EffectContextHandle.AddInstigator(this, this);
+
 	const FGameplayEffectSpecHandle EffectSpecHandle = TargetASC->MakeOutgoingSpec(GameplayEffectClass, ActorLevel, EffectContextHandle);
 	
 	FActiveGameplayEffectHandle ActiveEffectHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
@@ -74,7 +81,8 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 
 	if (bIsInfinite && InfiniteEffectRemovalPolicy == EEffectRemovalPolicy::RemoveOnEndOverlap) 
 	{
-		ActiveEffectHandles.Add(ActiveEffectHandle, TargetASC);
+			ActiveEffectHandles.Add(ActiveEffectHandle, TargetASC);
+		
 	}
 
 	if (!bIsInfinite) {
@@ -84,6 +92,14 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 
 void AAuraEffectActor::OnOverlap(AActor* TargetActor)
 {
+
+	if (bConsumed) return;
+	
+	if (!bConsumed)
+	{
+		bConsumed = true;
+	}
+	
 	const bool bIsEnemy = TargetActor->ActorHasTag(FName("Enemy"));
 	if (bIsEnemy && !bApplyEffectsToEnemies) return;
 

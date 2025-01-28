@@ -16,7 +16,6 @@ class AURA_API UDebuffNiagaraComponent : public UNiagaraComponent
 {
 	GENERATED_BODY()
 
-
 public:
 
 	UDebuffNiagaraComponent();
@@ -27,8 +26,7 @@ public:
 	FGameplayTag DebuffTag;
 
 protected:
-
-
+	
 	UFUNCTION()
 	void DebuffTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 

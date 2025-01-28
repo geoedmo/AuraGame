@@ -10,8 +10,6 @@
 #include "AbilitySystem/Passive/PassiveNiagaraComponent.h"
 #include "AuraCharacterBase.generated.h"
 
-
-
 class UAbilitySystemComponent;
 class UGameplayEffect;
 class UAttributeSet;
@@ -27,13 +25,11 @@ class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInte
 	GENERATED_BODY()
 
 public:
-	
 	AAuraCharacterBase();
 	
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -76,6 +72,10 @@ public:
 	virtual bool GetIsCasting_Implementation() override;
 	virtual void SetIsCasting_Implementation(bool InIsCasting) override;
 
+	// AOE Functions from Combat Interface
+	virtual bool TakingAOEDamage_Implementation() override;
+	virtual void SetTakingAOEDamage_Implementation(bool bInSetting) override;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
 	TArray<FTaggedMontage> AttackMontages;
 
@@ -114,6 +114,9 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo();
 
+	UPROPERTY(VisibleAnywhere)
+	int32 AOEComponentStack = 0;
+	
 	UPROPERTY(EditAnywhere, Category = Combat)
 	TObjectPtr<UNiagaraSystem> BloodEffect;
 
@@ -191,8 +194,12 @@ protected:
 	int32 MinionCount = 0;
 	bool CastingSummon = false;
 
-private:
 
+
+private:
+	// Temporary AOE Damage fixes
+	bool bTakingAOEDamage = false;
+	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UPassiveNiagaraComponent> HaloOfProectionNiagaraComponent;
 	

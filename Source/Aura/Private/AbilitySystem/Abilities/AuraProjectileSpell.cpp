@@ -32,12 +32,10 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	SpawnTransform.SetLocation(SocketLocation);
 
 	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
-	//Rotation.Pitch = 0.f;
+	Rotation.Pitch = 0.f;
 
 	SpawnTransform.SetRotation(Rotation.Quaternion());
-
-	// TODO: Set the projectile Rotation
-
+	
 	AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
 		ProjectileType,
 		SpawnTransform,
@@ -46,6 +44,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn
 	);
 
+	Projectile->SetOwner(GetAvatarActorFromActorInfo());
 	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
 
 	//For Projectile Spells, we set the projectile damage type to the damage type, so that it can make use of DamageType specific debuffs.
@@ -58,7 +57,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 void UAuraProjectileSpell::SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag,
 	AActor* HomingTarget, bool bOverridePitch, float PitchOverride)
 {
-		const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
+	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 
 	if (!bIsServer) return;
 
@@ -75,9 +74,7 @@ void UAuraProjectileSpell::SpawnProjectiles(const FVector& ProjectileTargetLocat
 	const FVector Forward = Rotation.Vector();
 	int32 EffectiveNumProjectiles = FMath::Min(MaxNumProjectiles, GetAbilityLevel());
 	TArray<FRotator> Rotations = UAuraAbilitySystemLibrary::EvenlySpacedRotators(Forward, FVector::UpVector, ProjectileSpread, EffectiveNumProjectiles);
-
-
-
+	
 	for (const FRotator& Rot : Rotations)
 	{
 		FTransform SpawnTransform;
@@ -97,8 +94,6 @@ void UAuraProjectileSpell::SpawnProjectiles(const FVector& ProjectileTargetLocat
 
 		// Current Known Issue with Fireballs Homing.. If the target dies before the fireball reaches it, it does not explode.
 
-		
-			
 		
 		if (HomingTarget && HomingTarget->Implements<UCombatInterface>()) {
 

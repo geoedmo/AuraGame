@@ -169,16 +169,27 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName("Abilities.Fire.FireBlast"),
 		FString("FireBlast Ability Tag")
 	);
+	
+	GameplayTags.Abilities_Fire_FirenadoStorm = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	FName("Abilities.Fire.FirenadoStorm"),
+	FString("Firenado Storm Ability Tag")
+	);
 	GameplayTags.Abilities_Lightning_Electrocute = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.Lightning.Electrocute"),
 		FString("Electrocute Ability Tag")
 	);
-	
+	GameplayTags.Abilities_Lightning_LightningOrb = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	FName("Abilities.Lightning.LightningOrb"),
+	FString("Lightning Orb Ability Tag")
+	);
 	GameplayTags.Abilities_Arcane_ArcaneShards = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.Arcane.ArcaneShards"),
 		FString("Arcane Shards Ability Tag")
 	);
-
+	GameplayTags.Abilities_Arcane_ArcaneShardLash = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Arcane.ArcaneShardLash"),
+		FString("Arcane Shards Lash Ability Tag")
+	);
 	
 	/*
 	 * Passive Abilities
@@ -253,14 +264,26 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Cooldowns_Fire_FireBlast = UGameplayTagsManager::Get().AddNativeGameplayTag(
 	FName("Cooldowns.Fire.FireBlast"),
 	FString("FireBlast Cooldown Tag")
-);
+	);	
+	GameplayTags.Cooldowns_Fire_FirenadoStorm = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldowns.Fire.FirenadoStorm"),
+		FString("FirenadoStorm Cooldown Tag")
+	);
 	GameplayTags.Cooldowns_Lightning_Electrocute = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Cooldowns.Lightning.Electrocute"),
 		FString("Electrocute Cooldown Tag")
 	);
+	GameplayTags.Cooldowns_Lightning_LightningOrb = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	FName("Cooldowns.Lightning.LightningOrb"),
+	FString("Lightning Orb Cooldown Tag")
+	);
 	GameplayTags.Cooldowns_Arcane_ArcaneShards = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Cooldowns.Arcane.ArcaneShards"),
 		FString("ArcaneShards Cooldown Tag")
+	);
+	GameplayTags.Cooldowns_Arcane_ArcaneShardLash = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldowns.Arcane.ArcaneShardLash"),
+		FString("ArcaneShardLash Cooldown Tag")
 	);
 
 	/*

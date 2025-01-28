@@ -7,7 +7,9 @@
 #include "GameplayTagContainer.h"
 #include "Actor/AuraProjectile.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
+#include "TimerManager.h"
 #include "CombatInterface.generated.h"
+
 
 class UAbilitySystemComponent;
 class UNiagaraSystem;
@@ -122,12 +124,16 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void SetIsCasting(bool InIsCasting);
-
 	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool TakingAOEDamage();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SetTakingAOEDamage(bool bInSetting);
+
 	virtual void Die(const FVector& DeathImpulse) = 0;
 	virtual FOnDeathSignature& GetOnDeathSignature() = 0;
 	virtual FOnDamageSignature& GetOnDamageSignature() = 0;
 	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() = 0;
-
-	//virtual FOnDeath GetOnDeathDelegate() = 0;
+	
 };

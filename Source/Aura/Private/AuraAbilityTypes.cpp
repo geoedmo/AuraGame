@@ -96,6 +96,10 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 			}
 		}
 		
+		if (bIsAOEDamage)
+		{
+			RepBits |= 1 << 22;
+		}
 	}
 
 	Ar.SerializeBits(&RepBits, 22);
@@ -212,7 +216,10 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 		}
 		
 	}
-
+	if (RepBits & (1 << 22))
+	{
+		Ar << bIsAOEDamage;
+	}
 	
 	if (Ar.IsLoading())
 	{

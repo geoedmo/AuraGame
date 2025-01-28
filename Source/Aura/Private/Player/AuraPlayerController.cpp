@@ -19,8 +19,10 @@
 #include "Interaction/CombatInterface.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Actor/MagicCircle.h"
+#include "Actor/TravelArrowSystem.h"
 #include "Components/DecalComponent.h"
 #include "Aura/Aura.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 AAuraPlayerController::AAuraPlayerController() {
@@ -32,10 +34,12 @@ AAuraPlayerController::AAuraPlayerController() {
 
 void AAuraPlayerController::PlayerTick(float DeltaTime)
 {
+	
 	Super::PlayerTick(DeltaTime);
 	CursorTrace();
 	AutoRun();
 	UpdateMagicCircleLocation();
+	UpdateTravelArrowLocation(DeltaTime);
 }
 
 void AAuraPlayerController::ShowMagicCircle(UMaterialInterface* DecalMaterial)
@@ -65,9 +69,63 @@ void AAuraPlayerController::UpdateMagicCircleLocation()
 	if (IsValid(MagicCircle))
 	{
 			MagicCircle->SetActorLocation(CursorHit.ImpactPoint);
+	}
+}
+
+void AAuraPlayerController::ShowTravelArrow()
+{
+	if (!IsValid(TravelArrow))
+	{
+		TravelArrow = GetWorld()->SpawnActor<ATravelArrowSystem>(TravelArrowClass);
 		
 	}
 }
+
+void AAuraPlayerController::HideTravelArrow()
+{
+	if (IsValid(TravelArrow))
+	TravelArrow->Destroy();
+}
+
+void AAuraPlayerController::UpdateTravelArrowLocation(float DeltaTime)
+{
+
+	if (IsValid(TravelArrow))
+	{
+		// figure out a location to place the arrow that's clamped around the Character in a circle that doesnt move outside of its circular motion
+		FVector ActorLocation = GetASC()->GetAvatarActor()->GetActorLocation();
+		FVector CursorHitLocation = CursorHit.ImpactPoint;
+
+		FVector VectorToCursor = CursorHitLocation - ActorLocation;
+		FRotator RotationToCursor = VectorToCursor.Rotation();
+		float YawRotationToCursor = 0.f;
+		float PitchRotationToCursor = 0.f;
+		RotationToCursor.Pitch = PitchRotationToCursor;
+		RotationToCursor.Roll = 0.0f;
+		RotationToCursor.Yaw = YawRotationToCursor;
+		
+		FVector CursorRotation = RotationToCursor.Vector();
+		
+		FRotator ArrowRotation = UKismetMathLibrary::FindLookAtRotation(CursorHitLocation, ActorLocation);
+		ArrowRotation.Roll = 0.f;
+		ArrowRotation.Pitch = 0.f;
+		
+		TravelArrow->SetActorRotation(ArrowRotation);
+		
+		FVector ArrowForwardVector = -(TravelArrow->GetActorForwardVector());
+		
+		ArrowDisplayPoint = ActorLocation + (ArrowForwardVector * 50.f);
+		ArrowDisplayPoint.Z += 25.f;
+		
+		TravelArrow->SetActorLocation(ArrowDisplayPoint);
+	}
+}
+
+FVector AAuraPlayerController::GetArrowDisplayPoint()
+{
+	return ArrowDisplayPoint;
+}
+
 
 void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit)
 {

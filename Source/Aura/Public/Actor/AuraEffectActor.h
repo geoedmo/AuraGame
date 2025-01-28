@@ -3,8 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayAbilitySpec.h"
 #include "GameFramework/Actor.h"
 #include "GameplayEffectTypes.h"
+#include "ScalableFloat.h"
 #include "AuraEffectActor.generated.h"
 
 UENUM(BlueprintType)
@@ -37,12 +39,33 @@ public:
 	
 	virtual void Tick(float DeltaTime) override;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
+	FScalableFloat Damage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
+	FGameplayTag DamageType;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Applied Effects")
+	float ActorLevel;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
+	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
+	
 protected:
 
+
+	bool bConsumed = false;
+	
 	virtual void BeginPlay() override;
 
 	/** Variables **/
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
+	FGameplayAbilitySpec GameplayAbilitySpec;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
+	bool bIsDamageActor = false;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sounds")
 	TObjectPtr<USoundBase> HitGroundImpactSound;
 
@@ -82,22 +105,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Loot Drop Effects")
 	FVector InitialLocation = FVector();
 	
-	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
 	bool bDestroyOnEffectApplication = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
 	bool bApplyEffectsToEnemies = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Applied Effects")
-	float ActorLevel;
-
-
-	/** Instant **/
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
-	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
-
+	bool bDoNotApplyToSelf = false;
+	
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<AActor> InstigatingActor;
+	
+	/** Instant **/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
 	TEnumAsByte<EEffectApplicationPolicy> InstantEffectApplicationPolicy = EEffectApplicationPolicy::DoNotApply;
 
@@ -149,7 +169,7 @@ protected:
 
 	/** Functions **/
 	UFUNCTION(BlueprintCallable)
-	void ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect>GameplayEffectClass);
+	virtual void ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect>GameplayEffectClass);
 
 	UFUNCTION(BlueprintCallable)
 	void OnOverlap(AActor* TargetActor);
@@ -160,10 +180,7 @@ protected:
 	TMap<FActiveGameplayEffectHandle, UAbilitySystemComponent*> ActiveEffectHandles;
 
 private:
-
-
 	
-
 	float RunningTime = 0.f;
 	
 	void ItemMovement(float DeltaTime);

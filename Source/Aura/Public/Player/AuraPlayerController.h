@@ -8,6 +8,7 @@
 #include "AuraPlayerController.generated.h"
 
 
+class ATravelArrowSystem;
 struct FGameplayTag;
 struct FInputActionValue;
 class UInputMappingContext;
@@ -48,16 +49,39 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AMagicCircle> MagicCircleClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<ATravelArrowSystem> TravelArrow;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ATravelArrowSystem> TravelArrowClass;
+	
+	/*
+	 * Magic Circle
+	 */
 	UFUNCTION(BlueprintCallable)
 	void ShowMagicCircle(UMaterialInterface* DecalMaterial);
 	
 	UFUNCTION(BlueprintCallable)
 	void HideMagicCircle();
-
 	
 	void UpdateMagicCircleLocation();
+
+	/*
+	 * Travel Arrow
+	 */
+		
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Travel Arrow")
+	FVector ArrowDisplayPoint = FVector::ZeroVector;
 	
+	UFUNCTION(BlueprintCallable)
+	void ShowTravelArrow();
 	
+	UFUNCTION(BlueprintCallable)
+	void HideTravelArrow();
+	
+	void UpdateTravelArrowLocation(float DeltaTime);
+	FVector GetArrowDisplayPoint();
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UNiagaraSystem> ClickNiagara;

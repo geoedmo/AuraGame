@@ -257,6 +257,34 @@ void AAuraCharacter::HideMagicCircle_Implementation()
 	}
 }
 
+FVector AAuraCharacter::GetArrowDisplayPoint_Implementation()
+{
+	if (AAuraPlayerController* AuraPlayerController = Cast<AAuraPlayerController>(GetController()))
+	{
+		return AuraPlayerController->GetArrowDisplayPoint();
+	}
+	
+	return FVector::ZeroVector;
+}
+
+void AAuraCharacter::ShowTravelArrow_Implementation()
+{
+	if (AAuraPlayerController* AuraPlayerController = Cast<AAuraPlayerController>(GetController()))
+	{
+		AuraPlayerController->ShowTravelArrow();
+		AuraPlayerController->bShowMouseCursor = false;
+	}
+}
+
+void AAuraCharacter::HideTravelArrow_Implementation()
+{
+	if (AAuraPlayerController* AuraPlayerController = Cast<AAuraPlayerController>(GetController()))
+	{
+		AuraPlayerController->HideTravelArrow();
+		AuraPlayerController->bShowMouseCursor = true;
+	}
+}
+
 void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 {
 	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
@@ -379,7 +407,7 @@ void AAuraCharacter::InitAbilityActorInfo()
 	AttributeSet = AuraPlayerState->GetAttributeSet();
 	OnAscRegistered.Broadcast(AbilitySystemComponent);
 
-
+	
 	AbilitySystemComponent->RegisterGameplayTagEvent(FAuraGameplayTags::Get().Debuff_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AAuraCharacter::StunTagChanged);
 
 	AAuraPlayerController* AuraPlayerController = Cast<AAuraPlayerController>(GetController());

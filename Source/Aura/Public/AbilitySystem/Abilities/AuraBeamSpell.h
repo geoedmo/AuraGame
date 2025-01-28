@@ -35,10 +35,9 @@ public:
 	void AdditionalTargetDied(AActor* DeadActor);
 
 protected:
-
-
+	
 	UPROPERTY(BlueprintReadWrite, Category = "Beam")
-	FVector MouseHitLocation;
+	FVector MouseHitLocation = FVector();
 
 	UPROPERTY(BlueprintReadWrite, Category = "Beam")
 	TObjectPtr<AActor> MouseHitActor;

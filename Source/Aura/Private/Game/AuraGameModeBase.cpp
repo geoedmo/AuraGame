@@ -2,10 +2,9 @@
 
 
 #include "Game/AuraGameModeBase.h"
-
 #include "EngineUtils.h"
 #include "Aura/AuraLogChannels.h"
-#include "CookOnTheSide/CookOnTheFlyServer.h"
+//#include "CookOnTheSide/CookOnTheFlyServer.h"
 #include "Game/AuraGameInstance.h"
 #include "Game/LoadMenuSaveObject.h"
 #include "GameFramework/Character.h"

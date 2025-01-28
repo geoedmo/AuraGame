@@ -65,11 +65,17 @@ public:
 	FGameplayTag Abilities_None;
 	FGameplayTag Abilities_Attack;
 	FGameplayTag Abilities_Summon;
-	FGameplayTag Abilities_Fire_FireBolt;
+	// Lightning
 	FGameplayTag Abilities_Lightning_Electrocute;
+	FGameplayTag Abilities_Lightning_LightningOrb;
+	// Arcane
 	FGameplayTag Abilities_Arcane_ArcaneShards;
+	FGameplayTag Abilities_Arcane_ArcaneShardLash;
+	// Fire
+	FGameplayTag Abilities_Fire_FirenadoStorm;
 	FGameplayTag Abilities_Fire_FireBlast;
-
+	FGameplayTag Abilities_Fire_FireBolt;
+	
 	FGameplayTag Abilities_HitReact;
 
 	FGameplayTag Abilities_Status_Locked;
@@ -87,10 +93,13 @@ public:
 	FGameplayTag Abilities_Passive_ManaSiphon;
 
 	/** Cooldowns **/
+	FGameplayTag Cooldowns_Fire_FirenadoStorm;
 	FGameplayTag Cooldowns_Fire_FireBolt;
 	FGameplayTag Cooldowns_Fire_FireBlast;
 	FGameplayTag Cooldowns_Lightning_Electrocute;
+	FGameplayTag Cooldowns_Lightning_LightningOrb;
 	FGameplayTag Cooldowns_Arcane_ArcaneShards;
+	FGameplayTag Cooldowns_Arcane_ArcaneShardLash;
 
 	/** Combat Socket Tags **/
 	FGameplayTag CombatSocket_Weapon;
@@ -111,9 +120,7 @@ public:
 	FGameplayTag Damage_Lightning;
 	FGameplayTag Damage_Arcane;
 	FGameplayTag Damage_Physical;
-
-
-
+	
 	/*Player Tags*/
 	FGameplayTag Player_Block_CursorTrace;
 	FGameplayTag Player_Block_InputPressed;

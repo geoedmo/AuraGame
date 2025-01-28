@@ -190,14 +190,26 @@ bool UAuraAbilitySystemLibrary::IsBlockedHit(const FGameplayEffectContextHandle&
 	return false;
 }
 
+bool UAuraAbilitySystemLibrary::IsAOEDamage(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FAuraGameplayEffectContext* AuraEffectContext = static_cast<const FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
+		return AuraEffectContext->IsAOEDamage();
+	}
+	return false;
+}
+
 void UAuraAbilitySystemLibrary::SetIsBlockedHit (UPARAM(ref) FGameplayEffectContextHandle EffectContextHandle, bool bInIsBlockedHit)
 {
 	if (FAuraGameplayEffectContext* AuraEffectContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
-
 		AuraEffectContext->SetIsBlockedHit(bInIsBlockedHit);
-
 	}
+}
 
+void UAuraAbilitySystemLibrary::SetIsAOEDamage(FGameplayEffectContextHandle EffectContextHandle, bool bInIsAOEDamage)
+{
+	if (FAuraGameplayEffectContext* AuraEffectContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get())) {
+		AuraEffectContext->SetIsAOEDamage(bInIsAOEDamage);
+	}
 }
 
 bool UAuraAbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle)
@@ -320,13 +332,14 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
 {	
 
 	const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+	
 	const AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
 
 	FGameplayEffectContextHandle EffectContextHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeEffectContext();
 	EffectContextHandle.AddSourceObject(SourceAvatarActor);
-
 	
 	SetKnockback(EffectContextHandle, DamageEffectParams.Knockback);
+	SetIsAOEDamage(EffectContextHandle, DamageEffectParams.bIsAOEDamage);
 	SetDeathImpulse(EffectContextHandle, DamageEffectParams.DeathImpulse);
 	SetIsRadialDamage(EffectContextHandle, DamageEffectParams.bIsRadialDamage);
 	SetRadialDamageInnerRadius(EffectContextHandle, DamageEffectParams.RadialDamageInnerRadius);

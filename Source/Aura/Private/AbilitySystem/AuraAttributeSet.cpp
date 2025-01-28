@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "GameplayEffectExtension.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AIController.h"
 #include "Net/UnrealNetwork.h"
 #include "Interaction/CombatInterface.h"
 #include "AuraGameplayTags.h"
@@ -85,7 +86,7 @@ void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 	Super::PreAttributeChange(Attribute, NewValue);
 
 	if (Attribute == GetHealthAttribute()) {
-
+	
 		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxHealth());
 	}
 
@@ -102,7 +103,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
-
+	
 	if (Props.TargetCharacter->Implements<UCombatInterface>() && ICombatInterface::Execute_IsDead(Props.TargetCharacter)) return;
 
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute()) {
@@ -179,11 +180,13 @@ void UAuraAttributeSet::HandleDamage(FEffectProperties& Props)
 					Character->LaunchCharacter(KnockbackDirection, false, false);
 				}
 			}
-
-			if (Props.TargetAvatarActor->Implements<UCombatInterface>()  && !ICombatInterface::Execute_GetIsBeingShocked(Props.TargetAvatarActor)) {
+			const bool bIsAOEDamage = UAuraAbilitySystemLibrary::IsAOEDamage(ContextHandle);
+			// Do not hit react for radial damage (AOE abilities)
+			if (Props.TargetAvatarActor->Implements<UCombatInterface>()  && !ICombatInterface::Execute_GetIsBeingShocked(Props.TargetAvatarActor) && !bIsAOEDamage) {
 				
 				FGameplayTagContainer TagContainer;
 				TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
+				
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			
 			}
@@ -209,9 +212,7 @@ void UAuraAttributeSet::HandleXP(FEffectProperties& Props)
 {
 	const float LocalIncomingXP = GetIncomingXP();
 	SetIncomingXP(0);
-
-
-
+	
 	if (Props.SourceCharacter->Implements<UAuraPlayerInterface>() && Props.SourceCharacter->Implements<UCombatInterface>()) {
 
 
@@ -252,13 +253,9 @@ void UAuraAttributeSet::HandleXP(FEffectProperties& Props)
 			SetMana(GetMaxMana());
 
 			IAuraPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
-
-
-
+			
 		}
-
-
-
+		
 		IAuraPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);
 
 	}
@@ -328,20 +325,26 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float D
 
 		// Get Player Controller
 
-		if (Props.SourceCharacter) {
-			if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.SourceCharacter->Controller)) {
+		if (Props.SourceCharacter)
+		{
+			if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.SourceCharacter->GetController()))
+			{
 
 				PC->ShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
 				return;
 			}
 		}
-		if (Props.TargetCharacter) {
-			if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.TargetCharacter->Controller)) {
+		AController* EnemyController =  Props.TargetCharacter->GetController();
 
+		if (Props.TargetCharacter)
+		{
+			AAuraPlayerController* PC = Cast<AAuraPlayerController>(EnemyController);
+			if (PC)
+			{
 				PC->ShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
 			}
 		}
-
+		
 	}
 }
 
@@ -352,7 +355,7 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 
 	Props.EffectContextHandle = Data.EffectSpec.GetContext();
 	Props.SourceASC = Props.EffectContextHandle.GetOriginalInstigatorAbilitySystemComponent();
-
+	
 	if (IsValid(Props.SourceASC) && Props.SourceASC->AbilityActorInfo.IsValid() && Props.SourceASC->AbilityActorInfo->AvatarActor.IsValid())
 	{
 		Props.SourceAvatarActor = Props.SourceASC->AbilityActorInfo->AvatarActor.Get();

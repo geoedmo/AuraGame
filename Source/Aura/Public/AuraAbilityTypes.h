@@ -73,6 +73,10 @@ struct FDamageEffectParams {
 	
 	UPROPERTY(BlueprintReadWrite)
 	FVector RadialDamageOrigin = FVector::ZeroVector;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsAOEDamage = false;
+	
 };
 
 
@@ -89,6 +93,7 @@ public:
 	
 	bool IsCriticalHit() const { return bIsCriticalHit; }
 	bool IsBlockedHit() const { return bIsBlockedHit; }
+	bool IsAOEDamage() const { return bIsAOEDamage; }
 	bool IsSuccessfulDebuff() const { return bIsSuccessfulDebuff; }
 	float GetDebuffDuration() const { return DebuffDuration; }
 	float GetDebuffDamage() const { return DebuffDamage; }
@@ -107,6 +112,7 @@ public:
 	*  Setters
 	*/
 	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit;}
+	void SetIsAOEDamage(bool bInIsAOEDamage) { bIsAOEDamage = bInIsAOEDamage; }
 	void SetIsBlockedHit(bool bInIsBlockedHit) { bIsBlockedHit = bInIsBlockedHit; }
 	void SetIsSuccessfulDebuff(bool bInIsSuccessfulDebuff) { bIsSuccessfulDebuff = bInIsSuccessfulDebuff; }
 	void SetDebuffDuration(float InDebuffDuration) { DebuffDuration = InDebuffDuration;}
@@ -179,6 +185,9 @@ protected:
 
 	UPROPERTY()
 	bool bIsRadialDamage = false;
+
+	UPROPERTY()
+	bool bIsAOEDamage = false;
 	
 	UPROPERTY()
 	float RadialDamageInnerRadius = 0.f;

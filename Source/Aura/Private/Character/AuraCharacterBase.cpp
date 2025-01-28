@@ -154,13 +154,14 @@ void AAuraCharacterBase::MutlicastHandleDeath_Implementation(const FVector& Deat
 
 	// Enemy Health Bar falls through the floor, this is the solution:
 	RemoveEnemyHealthBar();
-
+	
 	bDead = true;
 	BurnDebuffComponent->Deactivate();
 	StunDebuffComponent->Deactivate();
 
 	OnDeathDelegate.Broadcast(this);
 	//OnDeath.Broadcast(this);
+	
 }
 
 void AAuraCharacterBase::RemoveEnemyHealthBar()
@@ -177,6 +178,8 @@ void AAuraCharacterBase::StunTagChanged(const FGameplayTag StunTag, int32 NewCou
 	bIsStunned = NewCount > 0;
 	GetCharacterMovement()->MaxWalkSpeed = bIsStunned ? 0.f : BaseWalkSpeed;
 }
+
+
 
 void AAuraCharacterBase::BeginPlay()
 {
@@ -200,7 +203,6 @@ void AAuraCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> Gameplay
 }
 void AAuraCharacterBase::AddCharacterAbilities()
 {
-
 	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 
 	if (!HasAuthority()) return;
@@ -348,6 +350,17 @@ void AAuraCharacterBase::SetIsCasting_Implementation(bool InIsCasting)
 {
 	bIsCasting = InIsCasting;
 }
+
+bool AAuraCharacterBase::TakingAOEDamage_Implementation()
+{
+	return bTakingAOEDamage;
+}
+
+void AAuraCharacterBase::SetTakingAOEDamage_Implementation(bool bInSetting)
+{
+	bTakingAOEDamage = bInSetting;
+}
+
 
 /*FOnDeath AAuraCharacterBase::GetOnDeathDelegate()
 {

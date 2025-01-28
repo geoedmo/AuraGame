@@ -35,7 +35,7 @@ public:
 
 protected:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
@@ -67,6 +67,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage Properties")
 	bool bIsRadialDamage = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Damage Properties")
+	bool bIsAOEDamage = false;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage Properties")
 	float RadialDamageInnerRadius = 0.f;

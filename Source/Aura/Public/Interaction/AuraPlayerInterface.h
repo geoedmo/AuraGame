@@ -63,6 +63,15 @@ public:
 	void HideMagicCircle();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	FVector GetArrowDisplayPoint();
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ShowTravelArrow();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void HideTravelArrow();
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void SaveProgress(const FName& CheckpointTag);
 
 };
